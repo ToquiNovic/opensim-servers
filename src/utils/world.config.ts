@@ -1,4 +1,14 @@
-function myWorldInit(ip, port, gridName, dbHost, dbName, dbUsername, dbPassword) {
+interface IWorldConfigProps {
+    ip: string;
+    port: string;
+    gridName: string;
+    dbHost: string;
+    dbName: string;
+    dbUsername: string;
+    dbPassword: string;
+}
+
+export function WorldInit({ ip, port, gridName, dbHost, dbName, dbUsername, dbPassword }: IWorldConfigProps) {
     return `
     ; ### Toqui
 [Startup]
@@ -141,5 +151,3 @@ ConnectionString = "Data Source=${dbHost};Database=${dbName};User ID=${dbUsernam
     GroupsExternalURI = "http://${ip}:${port}"
 `;
 }
-
-module.exports = { myWorldInit };

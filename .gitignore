@@ -1,1 +1,11 @@
 __pycache__
+
+# Dependency directories
+node_modules
+dist
+
+# package-lock
+package-lock.json
+
+# Npm 
+pnpm-lock.yaml
