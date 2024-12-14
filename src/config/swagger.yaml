@@ -1,0 +1,186 @@
+openapi: 3.0.0
+info:
+  title: Servers API
+  description: API from creating and managing servers
+  version: "1.0.0"
+servers:
+  - url: http://localhost:3000
+  # - url: https://servers-api.herokuapp.com
+tags:
+  - name: Server
+    description: API for managing servers
+paths:
+  /server:
+    get:
+      tags:
+        - Server
+      summary: Get all servers
+      responses:
+        "200":
+          description: A list of servers
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Server'
+    post:
+      tags:
+        - Server
+      summary: Create a new server
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateServer'
+      responses:
+        "201":
+          description: Server created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Server'
+    put:
+      tags:
+        - Server
+      summary: Update server by grid name
+      parameters:
+        - name: gridName
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateServer'
+      responses:
+        "200":
+          description: Server updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Server'
+
+  /server/{gridName}:
+    get:
+      tags:
+        - Server
+      summary: Get server by grid name
+      parameters:
+        - name: gridName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Server details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Server'
+    
+    
+    delete:
+      tags:
+        - Server
+      summary: Delete server by grid name
+      parameters:
+        - name: gridName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Server deleted
+
+  /server/files/{gridName}:
+    get:
+      tags:
+        - Server
+      summary: Get server files by grid name
+      parameters:
+        - name: gridName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Server file
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerFiles'
+  /server/files:
+    post:
+      tags:
+        - Server
+      summary: Get specific file from server
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                gridName:
+                  type: string
+                filePath:
+                  type: string
+      responses:
+        "201":
+          description: File uploaded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerFiles'
+components:
+  schemas:
+    Server:
+      type: object
+      properties:
+        Message:
+          type: string
+        status:
+          type: string
+        path:
+          type: string
+    CreateServer:
+      type: object
+      properties:
+        port:
+          type: string
+        regionName:
+          type: string
+        uuid:
+          type: string
+        coordinates:
+          type: string
+        ip:
+          type: string
+        gridName:
+          type: string
+        dataBaseHost:
+          type: string
+        dataBaseName:
+          type: string
+        dataBaseUser:
+          type: string
+        dataBasePassword:
+          type: string
+    ServerFiles:
+      type: object
+      properties:
+        directory1:
+          type: object
+        directory2:
+          type: object
+        directory3:
+          type: object
+      
