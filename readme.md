@@ -12,13 +12,13 @@ Este proyecto proporciona una API para crear y gestionar servidores de OpenSim. 
 ## Instalación
 
 1. Clona el repositorio:
-   ```bash
-   git clone https://github.com/tu-usuario/opensim-servers.git
-   ```
+```bash
+   git clone https://github.com/ToquiNovic/opensim-servers.git
+ ```
 2. Navega al directorio del proyecto:
-    ```bash
+ ```bash
     npm install
-  ```
+ ```
 
 ## Ejecucion 
 Para iniciar el proyecto, ejeecuta el siguiente comando:
