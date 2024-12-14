@@ -1,32 +1,26 @@
-import { ROOT_PATH } from "@config/config";
-import { regionConfig, WorldInit } from "@/utils";
+import { regionConfig, WorldInit, getServerPaths } from "../utils";
 import path from 'node:path'
 import fs from 'node:fs'
 
 interface ConfigServerProps {
     //* common
-    port: string;
+    port?: string;
     //* region config
     regionName: string;
     uuid: string;
     coordinates: string;
-    serverName: string;
     //* config world
     ip: string;
     gridName: string;
-    dbHost: string;
-    dbName: string;
-    dbUsername: string;
-    dbPassword: string;
+    dataBaseHost?: string;
+    dataBaseName: string;
+    dataBaseUser: string;
+    dataBasePassword: string;
 }
 
-export function ConfigServer(config : ConfigServerProps) {
+export function ConfigServer(config: ConfigServerProps) {
     // paths 
-    const serverPath = path.join(ROOT_PATH, config.serverName)
-    const regionPath = path.join(serverPath, 'region.ini');
-    const worldPath = path.join(serverPath, 'world.ini');
-
-    console.log(serverPath, regionPath, worldPath)
+    const { serverPath, regionPath, worldPath } = getServerPaths(config.gridName)
 
     // create server folder
     if (!fs.existsSync(serverPath)) {
@@ -47,5 +41,5 @@ export function ConfigServer(config : ConfigServerProps) {
     fs.writeFileSync(regionPath, regionContent);
     fs.writeFileSync(worldPath, worldContent);
 
-    return {regionPath, worldPath}
+    return { regionPath, worldPath }
 }

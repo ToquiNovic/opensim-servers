@@ -1,14 +1,22 @@
 interface IWorldConfigProps {
-    ip: string;
-    port: string;
-    gridName: string;
-    dbHost: string;
-    dbName: string;
-    dbUsername: string;
-    dbPassword: string;
+    ip?: string;
+    port?: string;
+    gridName?: string;
+    dataBaseHost?: string;
+    dataBaseName?: string;
+    dataBaseUser?: string;
+    dataBasePassword?: string;
 }
 
-export function WorldInit({ ip, port, gridName, dbHost, dbName, dbUsername, dbPassword }: IWorldConfigProps) {
+export function WorldInit({ 
+    ip = "127.0.0.0", 
+    port = "9000", 
+    gridName = "defaultGridName", 
+    dataBaseHost = "localhost", 
+    dataBaseName = "opensim", 
+    dataBaseUser = "opensim", 
+    dataBasePassword = "opensim"
+}: IWorldConfigProps) {
     return `
     ; ### Toqui
 [Startup]
@@ -21,7 +29,7 @@ export function WorldInit({ ip, port, gridName, dbHost, dbName, dbUsername, dbPa
 
 [DatabaseService]
     ; ### Set the db_password (again)S
-ConnectionString = "Data Source=${dbHost};Database=${dbName};User ID=${dbUsername};Password=${dbPassword};Old Guids=true;Allow Zero Datetime=true;"
+ConnectionString = "Data Source=${dataBaseHost};Database=${dataBaseName};User ID=${dataBaseUser};Password=${dataBasePassword};Old Guids=true;Allow Zero Datetime=true;"
 
 [Network]
     http_listener_port = ${port}

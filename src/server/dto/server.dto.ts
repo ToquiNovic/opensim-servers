@@ -3,11 +3,10 @@ export interface CreateServerDto {
     regionName: string;
     uuid: string;
     coordinates: string;
-    serverName: string;
     ip: string;
     gridName: string;
-    dbHost: string;
-    dbName: string;
-    dbUsername: string;
-    dbPassword: string;
+    dataBaseHost: string;
+    dataBaseName: string;
+    dataBaseUser: string;
+    dataBasePassword: string;
 }
