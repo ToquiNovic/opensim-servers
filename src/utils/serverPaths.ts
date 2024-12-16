@@ -18,8 +18,13 @@ export function getServerPaths(gridName: string) { // Get the paths of the serve
 }
 
 export function getServers() { // Get the list of servers
+
+    if (!fs.existsSync(ROOT_PATH)) { // Check if the ROOT_PATH exists, if not, create it
+        fs.mkdirSync(ROOT_PATH, { recursive: true });
+    }
+
     if (!ROOT_PATH) {
-        return fs.mkdirSync(ROOT_PATH, { recursive: true });
+        return [];
     }
 
     return fs.readdirSync(ROOT_PATH).map((gridName) => ({

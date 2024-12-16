@@ -3,9 +3,6 @@ info:
   title: Servers API
   description: API from creating and managing servers
   version: "1.0.0"
-servers:
-  - url: http://localhost:3000
-  - url: http://131.100.50.247:3001
 tags:
   - name: Server
     description: API for managing servers
