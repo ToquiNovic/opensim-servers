@@ -11,7 +11,10 @@ export async function CloneRepository(targetPath: string) {
     }
 
     try {
-        exe.execSync(`git clone ${GitConfig.repository} ${targetPath}`, { stdio: 'inherit' }) // clone the repository
+        const parts = targetPath.split('\\');
+        const lastTwoLevels = parts.slice(-2).join('/');
+        console.log(`git clone ${GitConfig.repository} ../${lastTwoLevels}`)
+        exe.execSync(`git clone ${GitConfig.repository} ../${lastTwoLevels}`) // clone the repository
         return {
             "Message": `The repository  ${GitConfig.repository} was successfully cloned`,
             "Status": "Success",
