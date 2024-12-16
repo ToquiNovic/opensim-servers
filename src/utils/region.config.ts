@@ -5,7 +5,7 @@ interface RegionProps {
     port?: string;
 }
 
-export function regionConfig({regionName, uuid, coordinates, port = "9000"}: RegionProps) {
+export function regionConfig({regionName, uuid, coordinates = "2431,2338", port = "9000"}: RegionProps) {
     return `
 ; ### Region ${regionName}
 
