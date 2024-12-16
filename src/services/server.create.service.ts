@@ -7,6 +7,7 @@ interface ICreateServerService {
 export async function CreateServerService({ gridName }: ICreateServerService) {
     try {
         const { serverPath } = getServerPaths(gridName);
+        
         return await CloneRepository(serverPath)
     } catch (error) {
         throw new Error(`Error creating server: ${error}`)

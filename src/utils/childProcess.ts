@@ -10,10 +10,19 @@ export async function CloneRepository(targetPath: string) {
         return { "Message": `The server ${targetPath} already exist` }
     }
 
-    exe.execSync(`git clone ${GitConfig.repository} ${targetPath}`, { stdio: 'inherit' }) // clone the repository
-    return {
-        "Message": `The repository  ${GitConfig.repository} was successfully cloned`,
-        "Status": "Success",
-        "Path": targetPath
+    try {
+        exe.execSync(`git clone ${GitConfig.repository} ${targetPath}`, { stdio: 'inherit' }) // clone the repository
+        return {
+            "Message": `The repository  ${GitConfig.repository} was successfully cloned`,
+            "Status": "Success",
+            "Path": targetPath
+        }
+    } catch (err) {
+        if (err instanceof Error) {
+            throw new Error(`Error git cloning repository: ${err.message}`)
+        } else {
+            throw err
+        }
     }
+
 }
