@@ -1,55 +1,112 @@
-import { ROOT_PATH } from "../config/config"
-import path from 'node:path'
-import fs from 'node:fs'
+import { ROOT_PATH } from "../config/config";
+import { terminateProcess } from "./childProcess";
+import path from "node:path";
+import fs from "node:fs";
 
 interface IFile {
-    ".git": string[];
-    files: string[];
-    bin: string[];
-    WifiPages: string[];
+    ".git"?: string[];
+    files?: string[];
+    bin?: string[];
+    WifiPages?: string[];
+    [key: string]: any;
 }
 
-export function getServerPaths(gridName: string) { // Get the paths of the server, region and world files
+function ensureDirectoryExists(dirPath: string): void {
+    if (!fs.existsSync(dirPath)) {
+        fs.mkdirSync(dirPath, { recursive: true });
+    }
+}
+
+export function getServerPaths(gridName: string) {
+    ensureDirectoryExists(ROOT_PATH);
+
     const serverPath = path.join(ROOT_PATH, gridName);
-    const regionPath = path.join(serverPath, 'bin', 'Regions', 'RegionConfig.ini');
-    const worldPath = path.join(serverPath, 'bin', 'config-include', 'MyWorld.ini');
+    const regionPath = path.join(serverPath, "bin", "Regions", "RegionConfig.ini");
+    const worldPath = path.join(serverPath, "bin", "config-include", "MyWorld.ini");
 
     return { serverPath, regionPath, worldPath };
 }
 
-export function getServers() { // Get the list of servers
+export function findOneServer(gridName: string) {
+    const { serverPath } = getServerPaths(gridName);
 
-    if (!fs.existsSync(ROOT_PATH)) { // Check if the ROOT_PATH exists, if not, create it
-        fs.mkdirSync(ROOT_PATH, { recursive: true });
+    if (!fs.existsSync(serverPath)) {
+        return { message: `The server ${gridName} does not exist.` };
     }
 
-    if (!ROOT_PATH) {
-        return [];
+    return { gridName, serverPath };
+}
+
+export function getServers() {
+    try {
+        ensureDirectoryExists(ROOT_PATH);
+
+        return fs.readdirSync(ROOT_PATH).map((gridName) => ({
+            gridName,
+            serverPath: getServerPaths(gridName).serverPath,
+        }));
+    } catch (error) {
+        return { message: (error as Error).message };
+    }
+}
+
+export function getServerFile(gridName: string, fileName: string) {
+    const { serverPath } = getServerPaths(gridName);
+
+    if (!fs.existsSync(serverPath)) {
+        return { message: `The server ${gridName} does not exist.` };
     }
 
-    return fs.readdirSync(ROOT_PATH).map((gridName) => ({
-        gridName,
-        serverPath: getServerPaths(gridName).serverPath
-        // ...getServerPaths(gridName) // por si se necesitan todas las rutas de los archivos 
-    }))
+    const filePath = path.join(serverPath, fileName);
+
+    if (!fs.existsSync(filePath)) {
+        return { message: `File ${fileName} does not exist in server ${gridName}.` };
+    }
+
+    try {
+        const content = fs.readFileSync(filePath, "utf8");
+        return { content };
+    } catch (error) {
+        return { message: (error as Error).message };
+    }
 }
 
-export function getServerFile(gridName: string, fileName: string) { // Get the content of a file in the server
-    const { serverPath } = getServerPaths(gridName)
-    const filePath = path.join(serverPath, fileName)
-    return {"ContentFile": fs.readFileSync(filePath, 'utf8')}
-}
+export function getServerFiles(gridName: string) {
+    const { serverPath } = getServerPaths(gridName);
 
-export function getServerFiles(gridName: string) { // Get the list of files in the server where the gridName is located
-    const { serverPath } = getServerPaths(gridName)
+    if (!fs.existsSync(serverPath)) {
+        return { message: `The server ${gridName} does not exist.` };
+    }
+
     return getDirectoryStructure(serverPath);
 }
 
-function getDirectoryStructure(dirPath: string): IFile { // Get the directory structure of the server
-    const result: any = {};
+export function deleteServer(gridName: string) {
+    const { serverPath } = getServerPaths(gridName);
+
+    if (!fs.existsSync(serverPath)) {
+        return { message: `The server ${gridName} does not exist.` };
+    }
+
+    try {
+        fs.rmSync(serverPath, { recursive: true });
+        return { message: "Server deleted." };
+    } catch (error: any) {
+        if (error.code === "EBUSY" || error.code === "EPERM") {
+            terminateProcess(serverPath);
+            fs.rmSync(serverPath, { recursive: true });
+            return { message: "Process terminated. Server deleted." };
+        } else {
+            return { message: error.message };
+        }
+    }
+}
+
+function getDirectoryStructure(dirPath: string): IFile {
+    const result: IFile = {};
     const items = fs.readdirSync(dirPath, { withFileTypes: true });
 
-    items.forEach(item => {
+    items.forEach((item) => {
         if (item.isDirectory()) {
             result[item.name] = getDirectoryStructure(path.join(dirPath, item.name));
         } else {

@@ -29,3 +29,18 @@ export async function CloneRepository(targetPath: string) {
     }
 
 }
+
+export function terminateProcess(serverPath: string) {
+    try {
+        const command = process.platform === 'win32'
+            ? `wmic process where "ExecutablePath like '${serverPath}%' and not ExecutablePath like '%wmic%'" delete`
+            : `pkill -f ${serverPath}`;
+        exe.execSync(command);
+    } catch (err) {
+        if (err instanceof Error) {
+            throw new Error(`Error terminating process: ${err.message}`)
+        } else {
+            throw err
+        }
+    }
+}

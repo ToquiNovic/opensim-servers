@@ -1,6 +1,6 @@
 import { CreateServerDto } from "./dto/server.dto";
 import { CreateServerService, ConfigServer } from "../services";
-import { getServerFile, getServerFiles, getServers } from "../utils";
+import { getServerFile, getServerFiles, getServers, deleteServer } from "../utils";
 
 export class ServerService {
 
@@ -11,7 +11,7 @@ export class ServerService {
     }
 
     deleteServer({ gridName }: { gridName: string }) {
-        return `Server ${gridName} deleted`
+        return deleteServer(gridName)
     }
 
     findOneServer({ gridName }: { gridName: string }) {
