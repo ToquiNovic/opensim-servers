@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { CreateServerDto } from "./dto/server.dto";
 import { ServerService } from "./server.service";
 
@@ -8,13 +8,13 @@ class ServerController {
         this.serverService = serverService
     }
 
-    createServer = (req: Request, res: Response) => {
+    createServer = (req: Request, res: Response, next: NextFunction) => {
         const createServerDto: CreateServerDto = req.body;
         this.serverService.createServer(createServerDto)
             .then((response) => {
                 res.status(201).send(response)
             }).catch((error) => {
-                res.status(500).send(error)
+                next(error)
             })
     }
 

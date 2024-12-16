@@ -5,13 +5,9 @@ import { getServerFile, getServerFiles, getServers } from "../utils";
 export class ServerService {
 
     async createServer(createServerDto: CreateServerDto) {
-        try {
-            const server = await CreateServerService(createServerDto)
-            ConfigServer(createServerDto)
-            return server
-        } catch (error) {
-            throw new Error(`Error creating server: ${error}`)
-        }
+        const server = await CreateServerService(createServerDto)
+        ConfigServer(createServerDto)
+        return server
     }
 
     deleteServer({ gridName }: { gridName: string }) {
@@ -23,11 +19,7 @@ export class ServerService {
     }
 
     listServers() {
-        try {
-            return getServers();
-        } catch (error) {
-            throw new Error(`Error listing servers: ${error}`);
-        }
+        return getServers();
     }
 
     serverFile({ gridName, fileName }: { gridName: string, fileName: string }) {
@@ -35,7 +27,7 @@ export class ServerService {
     }
 
     listServerFiles({ gridName }: { gridName: string }) {
-        return getServerFiles(gridName)
+        return getServerFiles(gridName);
     }
 
     startServer({ serverName }: { serverName: string }) {

@@ -9,7 +9,6 @@ interface IFile {
     WifiPages: string[];
 }
 
-
 export function getServerPaths(gridName: string) { // Get the paths of the server, region and world files
     const serverPath = path.join(ROOT_PATH, gridName);
     const regionPath = path.join(serverPath, 'bin', 'Regions', 'RegionConfig.ini');
@@ -20,7 +19,7 @@ export function getServerPaths(gridName: string) { // Get the paths of the serve
 
 export function getServers() { // Get the list of servers
     if (!ROOT_PATH) {
-        return []
+        return fs.mkdirSync(ROOT_PATH, { recursive: true });
     }
 
     return fs.readdirSync(ROOT_PATH).map((gridName) => ({
