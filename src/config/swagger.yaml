@@ -117,7 +117,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ServerFiles'
-  /server/files:
+  /server/file:
     post:
       tags:
         - Server
@@ -131,7 +131,7 @@ paths:
               properties:
                 gridName:
                   type: string
-                filePath:
+                fileName:
                   type: string
       responses:
         "201":
@@ -139,7 +139,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ServerFiles'
+                $ref: '#/components/schemas/Directory'
 components:
   schemas:
     Server:
@@ -183,4 +183,9 @@ components:
           type: object
         directory3:
           type: object
+    Directory:
+      type: object
+      properties:
+        content:
+          type: string
       

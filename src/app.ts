@@ -14,7 +14,10 @@ app.use(express.urlencoded({ extended: true }));
 swaggerInit(app)
 
 // Middlewares
-app.use(cors())
+app.use(cors({
+    origin: '*',
+    methods: ['GET', 'POST', 'PUT', 'DELETE']
+}))
 app.use(morgan('dev'))
 
 // Routes
