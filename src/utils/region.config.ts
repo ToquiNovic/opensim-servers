@@ -14,7 +14,7 @@ export function regionConfig({regionName, uuid, coordinates, port = "9000"}: Reg
 
 [${regionName}]
 RegionUUID = ${uuid}
-Location = ${coordinates}
+Location = "${coordinates}"
 SizeX = 512
 SizeY = 512
 InternalAddress = "0.0.0.0"

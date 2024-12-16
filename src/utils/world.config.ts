@@ -11,7 +11,7 @@ interface IWorldConfigProps {
 export function WorldInit({ 
     ip = "127.0.0.0", 
     port = "9000", 
-    gridName = "defaultGridName", 
+    gridName, 
     dataBaseHost = "localhost", 
     dataBaseName = "opensim", 
     dataBaseUser = "opensim", 
