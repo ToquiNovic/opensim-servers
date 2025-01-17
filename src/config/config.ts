@@ -9,3 +9,9 @@ export const GitConfig = {
     repository: process.env.GIT_REPOSITORY,
     branch: process.env.GIT_BRANCH,
 }
+
+export const DBConfig = {
+    BIN_PATH: path.resolve(process.env.DB_BIN_PATH || '/usr/bin/mysql'),
+    USER: process.env.DB_USER,
+    PASS: process.env.DB_PASSWORD,
+}

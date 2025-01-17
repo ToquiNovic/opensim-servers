@@ -18,7 +18,7 @@ export function WorldInit({
     dataBasePassword = "opensim"
 }: IWorldConfigProps) {
     return `
-    ; ### Toqui
+    ; ### UA3D Configuration File
 [Startup]
     ; SmartThreadPool is reported to work well on Mono/Linux, but 
     ; UnsafeQueueUserWorkItem has been benchmarked with better

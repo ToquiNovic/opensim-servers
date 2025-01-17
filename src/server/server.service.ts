@@ -5,8 +5,13 @@ import { getServerFile, getServerFiles, getServers, deleteServer } from "../util
 export class ServerService {
 
     async createServer(createServerDto: CreateServerDto) {
+        // Name of the database
+        createServerDto.dataBaseName = `UA3D_${createServerDto.gridName}`
+
         const server = await CreateServerService(createServerDto)
+
         ConfigServer(createServerDto)
+        
         return server
     }
 

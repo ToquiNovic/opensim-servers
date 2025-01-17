@@ -4,19 +4,51 @@ import path from "node:path";
 import fs from "node:fs";
 
 interface IFile {
-    ".git"?: string[];
+    [key: string]: IFile | string[] | undefined;
     files?: string[];
-    bin?: string[];
-    WifiPages?: string[];
-    [key: string]: any;
 }
 
+/**
+ * Returns the directory structure of a given directory.
+ * @param dirPath - The path of the directory to retrieve the structure of.
+ * @returns An object representing the directory structure.
+ */
+async function getDirectoryStructure(dirPath: string): Promise<IFile>  {
+    const result: IFile = {};
+    try {
+        const items = await fs.promises.readdir(dirPath, { withFileTypes: true });
+        for (const item of items) {
+            if (item.isDirectory()) {
+                result[item.name] = await getDirectoryStructure(path.join(dirPath, item.name))
+            } else {
+                if (!result.files) {
+                    result.files = [];
+                }
+                result.files.push(item.name);
+            }
+        }
+    } catch (error) {
+        return { files: [`Error reading directory ${dirPath}: ${(error as Error).message}`] };
+    }
+    
+    return result;
+}
+
+/**
+ * Ensures that a directory exists. If it does not, it creates it.
+ * @param dirPath - The path of the directory to check or create.
+ */
 function ensureDirectoryExists(dirPath: string): void {
     if (!fs.existsSync(dirPath)) {
         fs.mkdirSync(dirPath, { recursive: true });
     }
 }
 
+/**
+ * Generates and returns the paths for the server, region, and world for a given server.
+ * @param gridName - The name of the server grid.
+ * @returns An object containing the serverPath, regionPath, and worldPath.
+ */
 export function getServerPaths(gridName: string) {
     ensureDirectoryExists(ROOT_PATH);
 
@@ -27,6 +59,11 @@ export function getServerPaths(gridName: string) {
     return { serverPath, regionPath, worldPath };
 }
 
+/**
+ * Checks if a server exists and returns its name and path.
+ * @param gridName - The name of the server grid.
+ * @returns An object containing the gridName and serverPath, or a message if the server does not exist.
+ */
 export function findOneServer(gridName: string) {
     const { serverPath } = getServerPaths(gridName);
 
@@ -37,6 +74,10 @@ export function findOneServer(gridName: string) {
     return { gridName, serverPath };
 }
 
+/**
+ * Returns a list of all servers in the root directory.
+ * @returns An array of objects containing the gridName and serverPath, or a message if an error occurs.
+ */
 export function getServers() {
     try {
         ensureDirectoryExists(ROOT_PATH);
@@ -50,6 +91,12 @@ export function getServers() {
     }
 }
 
+/**
+ * Returns the content of a specific file in a given server.
+ * @param gridName - The name of the server grid.
+ * @param fileName - The name of the file to retrieve.
+ * @returns An object containing the file content, or a message if the file or server does not exist.
+ */
 export function getServerFile(gridName: string, fileName: string) {
     const { serverPath } = getServerPaths(gridName);
 
@@ -71,6 +118,11 @@ export function getServerFile(gridName: string, fileName: string) {
     }
 }
 
+/**
+ * Returns the directory structure of a given server.
+ * @param gridName - The name of the server grid.
+ * @returns An object representing the directory structure, or a message if the server does not exist.
+ */
 export function getServerFiles(gridName: string) {
     const { serverPath } = getServerPaths(gridName);
 
@@ -81,6 +133,13 @@ export function getServerFiles(gridName: string) {
     return getDirectoryStructure(serverPath);
 }
 
+
+
+/**
+ * Deletes a given server. If the process is busy or lacks permissions, it attempts to terminate the process before deleting the server.
+ * @param gridName - The name of the server grid.
+ * @returns A message indicating the result of the deletion.
+ */
 export function deleteServer(gridName: string) {
     const { serverPath } = getServerPaths(gridName);
 
@@ -102,20 +161,3 @@ export function deleteServer(gridName: string) {
     }
 }
 
-function getDirectoryStructure(dirPath: string): IFile {
-    const result: IFile = {};
-    const items = fs.readdirSync(dirPath, { withFileTypes: true });
-
-    items.forEach((item) => {
-        if (item.isDirectory()) {
-            result[item.name] = getDirectoryStructure(path.join(dirPath, item.name));
-        } else {
-            if (!result.files) {
-                result.files = [];
-            }
-            result.files.push(item.name);
-        }
-    });
-
-    return result;
-}

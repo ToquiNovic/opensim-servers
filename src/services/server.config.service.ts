@@ -18,28 +18,35 @@ interface ConfigServerProps {
     dataBasePassword: string;
 }
 
+
+function createDirectoryIfNotExists(directoryPath: string) {
+    if (!fs.existsSync(directoryPath)) {
+        fs.mkdirSync(path.dirname(directoryPath), { recursive: true });
+    }
+}
+
+function writeFile(filePath: string, content: string) {
+    fs.writeFileSync(filePath, content);
+}
+
 export function ConfigServer(config: ConfigServerProps) {
     // paths 
-    const { serverPath, regionPath, worldPath } = getServerPaths(config.gridName)
+    const { serverPath, regionPath, worldPath } = getServerPaths(config.gridName);
 
     // create server folder
-    if (!fs.existsSync(serverPath)) {
-        fs.mkdirSync(path.dirname(serverPath), { recursive: true })
-    }
+    createDirectoryIfNotExists(serverPath);
 
-    //! create region and world folder if not exists TEMP "revisar configuracion de carpetas"
-    if (!fs.existsSync(regionPath) && !fs.existsSync(worldPath)) {
-        fs.mkdirSync(path.dirname(regionPath), { recursive: true })
-        fs.mkdirSync(path.dirname(worldPath), { recursive: true })
-    }
+    // create region and world folder if not exists
+    createDirectoryIfNotExists(regionPath);
+    createDirectoryIfNotExists(worldPath);
 
     // create region and world files
-    const regionContent = regionConfig(config)
-    const worldContent = WorldInit(config)
+    const regionContent = regionConfig(config);
+    const worldContent = WorldInit(config);
 
     // write files
-    fs.writeFileSync(regionPath, regionContent);
-    fs.writeFileSync(worldPath, worldContent);
+    writeFile(regionPath, regionContent);
+    writeFile(worldPath, worldContent);
 
-    return { regionPath, worldPath }
+    return { regionPath, worldPath };
 }
