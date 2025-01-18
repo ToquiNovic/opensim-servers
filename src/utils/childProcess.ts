@@ -46,10 +46,13 @@ export async function CloneRepository(targetPath: string) {
             "Path": targetPath
         };
     } catch (err) {
+        if (fs.existsSync(targetPath)) {
+            fs.rmSync(targetPath, { recursive: true });
+        }
         if (err instanceof Error) {
-            throw new Error(`Error git cloning repository: ${err.message}`)
+            throw new Error(`Error git cloning repository: ${err.message}`);
         } else {
-            throw err
+            throw err;
         }
     }
 }

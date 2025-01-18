@@ -1,4 +1,5 @@
 import { getServerPaths, CloneRepository, checkDatabase, createDatabase } from "../utils"
+import { CustomError } from "../middlewares/global-errors";
 import fs from 'node:fs'
 
 interface ICreateServerService {
@@ -20,8 +21,16 @@ export async function CreateServerService({ gridName, dataBaseName }: ICreateSer
             return { Message: `The database ${dataBaseName} already exists` };
         }
 
+        // Clone repository
+        const repository = await CloneRepository(serverPath) // poner mensajes antes de cada proceso
+        if (repository.Status !== 'sucess') {
+            return { Message: `Error cloning repository: ${repository.Message}` }
+        }
+
+        // create database
         await createDatabase(dataBaseName)
-        return await CloneRepository(serverPath)
+
+        return repository
     } catch (error) {
         throw Error(`Error creating server: ${error}`)
     }

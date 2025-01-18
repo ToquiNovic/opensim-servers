@@ -59,6 +59,8 @@ export function getServerPaths(gridName: string) {
     return { serverPath, regionPath, worldPath };
 }
 
+// funcion para eliminar el path por si falla la clonacion o alguna parte del progreso 
+
 /**
  * Checks if a server exists and returns its name and path.
  * @param gridName - The name of the server grid.

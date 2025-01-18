@@ -16,7 +16,6 @@ export async function createDatabase(dbName: string) {
 
 export async function checkDatabase(dbName: string): Promise<boolean> {
     try {
-        console.log(dbName)
         const result = await executeCommand(`mysql -u ${DBConfig.USER} -p"${DBConfig.PASS}" -e "SHOW DATABASES LIKE '${dbName}';"`, DBConfig.BIN_PATH)
         return result.includes(dbName)
     } catch (error) {
@@ -28,6 +27,8 @@ export async function checkDatabase(dbName: string): Promise<boolean> {
     }
 
 }
+
+//! consultar usuarios de la base de datos especifica. 
 
 export async function dropDatabase(dbName: string) {
     try {
