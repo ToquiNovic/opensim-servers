@@ -1,20 +1,24 @@
-import { Router } from "express";
-import serverController from "./server.controller";
-import { validateResource } from "../middlewares/validateRequest";
-import { CreateServerSchema } from "./schema/server.schema";
+import { Router } from 'express';
+import { validateResource } from '../middlewares/validateRequest';
+import { CreateServerSchema } from './server.schema';
+import Controller from './server.controller';
 
-const router = Router();
+const ServerRouter = Router();
 
-router.get('/', serverController.listServers)
-router.get('/:gridName', serverController.findOneSever)
-router.get('/files/:gridName', serverController.listServerFiles)
+// Get 
+ServerRouter.get('/', Controller.get) // Get all servers
+ServerRouter.get('/file',Controller.getFiles) // Search file in server
+ServerRouter.get('/:gridname', Controller.getByGridName) // Get server by gridName
+ServerRouter.get('/files/:gridname', Controller.getFiles) // Get files by gridNames
 
-router.post('/', validateResource(CreateServerSchema), serverController.createServer)
-router.post('/file', serverController.serverFile) // busqueda de un archivo por path 
+// Post
+ServerRouter.post('/',validateResource(CreateServerSchema), Controller.create) // create server
+ServerRouter.post('/file', Controller.searchFile) // Search file in server
 
-router.put('/:gridName', serverController.startServer)
-router.put('/start/:gridName', serverController.startServer)
+// Put
+ServerRouter.put('/file',) // Update server file
 
-router.delete('/:gridName', serverController.deleteServer)
+// Delete
+ServerRouter.delete('/:gridname', Controller.delete) // Delete server
 
-export default router;
+export default ServerRouter;

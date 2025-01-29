@@ -21,29 +21,12 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Server'
-    post:
-      tags:
-        - Server
-      summary: Create a new server
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateServer'
-      responses:
-        "201":
-          description: Server created
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Server'
     put:
       tags:
         - Server
       summary: Update server by grid name
       parameters:
-        - name: gridName
+        - name: gridname
           in: path
           required: true
           schema:
@@ -61,14 +44,31 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Server'
+    post:
+      tags:
+        - Server
+      summary: Create a new server
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateServer'
+      responses:
+        "201":
+          description: Server created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Server'
 
-  /server/{gridName}:
+  /server/{gridname}:
     get:
       tags:
         - Server
       summary: Get server by grid name
       parameters:
-        - name: gridName
+        - name: gridname
           in: path
           required: true
           schema:
@@ -80,14 +80,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Server'
-    
-    
     delete:
       tags:
         - Server
       summary: Delete server by grid name
       parameters:
-        - name: gridName
+        - name: gridname
           in: path
           required: true
           schema:
@@ -96,13 +94,13 @@ paths:
         "200":
           description: Server deleted
 
-  /server/files/{gridName}:
+  /server/files/{gridname}:
     get:
       tags:
         - Server
       summary: Get server files by grid name
       parameters:
-        - name: gridName
+        - name: gridname
           in: path
           required: true
           schema:
@@ -114,6 +112,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ServerFiles'
+
   /server/file:
     post:
       tags:
@@ -126,9 +125,9 @@ paths:
             schema:
               type: object
               properties:
-                gridName:
+                gridname:
                   type: string
-                fileName:
+                filename:
                   type: string
       responses:
         "201":
@@ -137,6 +136,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Directory'
+
 components:
   schemas:
     Server:
@@ -185,4 +185,3 @@ components:
       properties:
         content:
           type: string
-      

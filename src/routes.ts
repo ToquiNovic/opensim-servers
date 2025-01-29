@@ -1,8 +1,8 @@
-import { Router } from "express";
-import serverRoutes from './server/server.routes'
+import { Router } from 'express';
+import ServerRouter from './server/server.routes';
 
-const router = Router();
+const routes = Router();
 
-router.use('/server', serverRoutes)
+routes.use('/server', ServerRouter)
 
-export default router;
+export default routes;

@@ -1,40 +1,35 @@
-import { CreateServerDto } from "./dto/server.dto";
-import { CreateServerService, ConfigServer } from "../services";
-import { getServerFile, getServerFiles, getServers, deleteServer } from "../utils";
+import { CreateServerDto, SearchFileDto } from "./server.dto";
+import { ConfigServer } from "./services/server.config";
+import { CreateServerService } from "./services/server.create";
+import directory from "../utils/directory";
 
 export class ServerService {
 
-    async createServer(createServerDto: CreateServerDto) {
-        createServerDto.dataBaseName = `UA3D_${createServerDto.dataBaseName}`
-
-        const server = await CreateServerService(createServerDto)
-
-        ConfigServer(createServerDto)
-        
-        return server
+    getServers() {
+        return directory.getServers();
     }
 
-    deleteServer({ gridName }: { gridName: string }) {
-        return deleteServer(gridName)
+    findOne({ gridname }: { gridname: string }) {
+        return directory.getServerByGridName(gridname);
     }
 
-    findOneServer({ gridName }: { gridName: string }) {
-        return gridName
+    async create(createServer: CreateServerDto) {
+        createServer.dataBaseName = `UA3D_${createServer.dataBaseName}`
+        const server = await CreateServerService(createServer);
+        ConfigServer(createServer)
+        return server;
     }
 
-    listServers() {
-        return getServers();
+    delete({ gridname }: { gridname: string }) {
+        return directory.delete(gridname);
     }
 
-    serverFile({ gridName, fileName }: { gridName: string, fileName: string }) {
-        return getServerFile(gridName, fileName)
+    async getServerFiles({ gridname }: { gridname: string }) {
+        return await directory.getServerFiles(gridname)
     }
 
-    listServerFiles({ gridName }: { gridName: string }) {
-        return getServerFiles(gridName);
-    }
-
-    startServer({ serverName }: { serverName: string }) {
-        return `Server ${serverName} started`
+    serverFile(searchFile: SearchFileDto) {
+        const { gridname, filename } = searchFile;
+        return directory.searchServerFile(gridname, filename);
     }
 }

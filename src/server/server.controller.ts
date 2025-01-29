@@ -1,52 +1,77 @@
 import { NextFunction, Request, Response } from "express";
-import { CreateServerDto } from "./dto/server.dto";
 import { ServerService } from "./server.service";
+import { CreateServerDto, SearchFileDto } from "./server.dto";
+import { log, LogLevel } from "../utils/logger";
 
 class ServerController {
-
-    constructor(private serverService: ServerService = new ServerService()) {
-        this.serverService = serverService
+    constructor(private service: ServerService = new ServerService()) {
+        this.service = service;
     }
 
-    createServer = (req: Request, res: Response, next: NextFunction) => {
-        const createServerDto: CreateServerDto = req.body;
-        this.serverService.createServer(createServerDto)
-            .then((response) => {
-                res.status(201).send(response)
-            }).catch((error) => {
-                next(error)
-            })
+    get = (_: Request, res: Response, next: NextFunction) => {
+        try {
+            res.status(200).json(this.service.getServers())
+        } catch (error) {
+            log(LogLevel.ERROR, 'Getting servers:', (error as Error).message)
+            next(error)
+        }
     }
 
-    deleteServer = (req: Request, res: Response) => { // api/server/:serverName
-        const { gridName } = req.params;
-        res.send(this.serverService.deleteServer({ gridName }))
+    getByGridName = (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const { gridname } = req.params
+            res.status(200).json(this.service.findOne({ gridname }))
+        } catch (error) {
+            log(LogLevel.ERROR, 'Getting server:', (error as Error).message)
+            next(error)
+        }
+
     }
 
-    findOneSever = (req: Request, res: Response) => {
-        const { gridName } = req.params;
-        res.send(this.serverService.findOneServer({ gridName }))
+    create = (req: Request, res: Response, next: NextFunction) => {
+        const createServer: CreateServerDto = req.body
+        this.service.create(createServer).then((response) => {
+            res.status(201).json(response)
+        }).catch((error) => {
+            log(LogLevel.ERROR, 'Creating server:', error.message)
+            next(error)
+        })
     }
 
-    listServers = (_: Request, res: Response) => {
-        res.send(this.serverService.listServers())
+    delete = (req: Request, res: Response, next: NextFunction) => {
+        const { gridname } = req.params
+        try {
+            const response = this.service.delete({ gridname })
+            res.status(200).json(response)
+        } catch (error) {
+            log(LogLevel.ERROR, 'Deleting server:', (error as Error).message)
+            next(error)
+        }
     }
 
-    serverFile = (req: Request, res: Response) => {
-        const { gridName, fileName } = req.body;
-        res.send(this.serverService.serverFile({ gridName, fileName }))
+    getFiles = (req: Request, res: Response, next: NextFunction) => {
+        const { gridname } = req.params
+        this.service.getServerFiles({ gridname }).then((response) => {
+            log(LogLevel.SUCCESS, 'Searching file: Success')
+            res.status(200).json(response)
+        }).catch((error) => {
+            log(LogLevel.ERROR, 'Getting server files:', error.message)
+            next(error)
+        })
+
     }
 
-    listServerFiles = (req: Request, res: Response) => {
-        const { gridName } = req.params;
-        res.send(this.serverService.listServerFiles({ gridName }))
-    }
-
-    // api/server/start/:serverName
-    startServer = (req: Request, res: Response) => {
-        const { serverName } = req.params;
-        res.send(this.serverService.startServer({ serverName }))
+    searchFile = (req: Request, res: Response, next: NextFunction) => {
+        const search: SearchFileDto = req.body
+        try {
+            const response = this.service.serverFile(search)
+            log(LogLevel.SUCCESS, 'Searching file: Success')
+            res.status(200).json(response)
+        } catch (error) {
+            log(LogLevel.ERROR, 'Searching file:', (error as Error).message)
+            next(error)
+        }
     }
 }
 
-export default new ServerController();
+export default new ServerController()

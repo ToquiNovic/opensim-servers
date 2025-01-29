@@ -1,5 +1,0 @@
-export * from './region.config'
-export * from './world.config'
-export * from './childProcess'
-export * from './serverPaths'
-export * from './db.config'

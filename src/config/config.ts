@@ -13,5 +13,5 @@ export const GitConfig = {
 export const DBConfig = {
     BIN_PATH: path.resolve(process.env.DB_BIN_PATH || '/usr/bin/mysql'),
     USER: process.env.DB_USER,
-    PASS: process.env.DB_PASSWORD,
+    PASS: process.env.DB_PASSWORD
 }

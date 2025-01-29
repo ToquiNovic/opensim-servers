@@ -6,6 +6,10 @@ export const GlobalErrors = (
     res: Response,
     next: NextFunction
 ) => {
+    if (res.headersSent) {
+        return next(error);
+    }
+
     if (error instanceof CustomError) {
         res.status(error.status).send({ message: error.message });
     } else if (error instanceof Error) {
@@ -13,7 +17,6 @@ export const GlobalErrors = (
     } else {
         res.status(500).send({ message: "An unknown error occurred" });
     }
-    next();
 }
 
 export class CustomError extends Error {
@@ -22,5 +25,17 @@ export class CustomError extends Error {
     constructor(message: string, status: number) {
         super(message);
         this.status = status;
+    }
+}
+
+export class NotFoundError extends CustomError {
+    constructor(message: string = "Not Found") {
+        super(message, 404);
+    }
+}
+
+export class BadRequestError extends CustomError {
+    constructor(message: string = "Bad Request") {
+        super(message, 400);
     }
 }

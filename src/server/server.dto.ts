@@ -1,4 +1,3 @@
-
 export class CreateServerDto {
     constructor(
         public port: string,
@@ -11,6 +10,12 @@ export class CreateServerDto {
         public dataBaseName: string,
         public dataBaseUser: string,
         public dataBasePassword: string,
-    ) {
-    }
+    ) {}
+}
+
+export class SearchFileDto {
+    constructor(
+        public gridname: string,
+        public filename: string,
+    ) {}
 }
