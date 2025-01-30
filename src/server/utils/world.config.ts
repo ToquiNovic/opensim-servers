@@ -1,4 +1,4 @@
-import { Opensim } from '../../config/config';
+import { DBConfig } from '../../config/config';
 
 interface IWorldConfigProps {
     ip?: string;
@@ -14,10 +14,10 @@ export function WorldInit({
     ip = "127.0.0.0", 
     port = "9000", 
     gridName, 
-    dataBaseHost = Opensim.DB_HOST, 
+    dataBaseHost = DBConfig.HOST, 
     dataBaseName = "opensim", 
-    dataBaseUser = Opensim.DB_USER, 
-    dataBasePassword = Opensim.DB_PASS
+    dataBaseUser = DBConfig.USER, 
+    dataBasePassword = DBConfig.PASS
 }: IWorldConfigProps) {
     return `
     ; ### UA3D Configuration File
