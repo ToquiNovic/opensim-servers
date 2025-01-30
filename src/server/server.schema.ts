@@ -20,18 +20,12 @@ export const CreateServerSchema = object({
         gridName: string({
             required_error: 'Grid Name is required'
         }),
-        dataBaseHost: string({
-            required_error: 'Database Host is required'
-        }),
         dataBaseName: string({
             required_error: 'Database Name is required'
         }),
-        dataBaseUser: string({
-            required_error: 'Database User is required'
-        }),
-        dataBasePassword: string({
-            required_error: 'Database Password is required'
-        }),
+        dataBaseHost: string().optional(),
+        dataBaseUser: string().optional(),
+        dataBasePassword: string().optional(),
     })
 })
 

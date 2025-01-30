@@ -14,7 +14,7 @@ export class ServerService {
     }
 
     async create(createServer: CreateServerDto) {
-        createServer.dataBaseName = `UA3D_${createServer.dataBaseName}`
+        createServer.dataBaseName = `ua3d_${createServer.dataBaseName}`
         const server = await CreateServerService(createServer);
         ConfigServer(createServer)
         return server;
