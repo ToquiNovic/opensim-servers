@@ -1,18 +1,19 @@
 interface RegionProps {
-    regionName: string;
-    uuid: string;
+    gridname: string;
     coordinates: string;
     port?: string;
 }
 
-export function regionConfig({regionName, uuid, coordinates = "2431,2338", port = "9000"}: RegionProps) {
+const uuid = "00000000-0000-0000-0000-000000000000";
+
+export function regionConfig({gridname, coordinates = "2431,2338", port = "9000"}: RegionProps) {
     return `
-; ### Region ${regionName}
+; ### Region ${gridname}
 
 ; * Regions configuration file
 ; * This is Your World
 
-[${regionName}]
+[${gridname}]
 RegionUUID = ${uuid}
 Location = "${coordinates}"
 SizeX = 512

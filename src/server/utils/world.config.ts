@@ -1,7 +1,6 @@
 import { DBConfig } from '../../config/config';
 
 interface IWorldConfigProps {
-    ip?: string;
     port?: string;
     gridName?: string;
     dataBaseHost?: string;
@@ -9,13 +8,13 @@ interface IWorldConfigProps {
     dataBaseUser?: string;
     dataBasePassword?: string;
 }
+const ip = "192.168.1.1"
 
 export function WorldInit({ 
-    ip = "127.0.0.0", 
     port = "9000", 
     gridName, 
     dataBaseHost = DBConfig.HOST, 
-    dataBaseName = "opensim", 
+    dataBaseName,
     dataBaseUser = DBConfig.USER, 
     dataBasePassword = DBConfig.PASS
 }: IWorldConfigProps) {

@@ -4,25 +4,48 @@ import { log, LogLevel } from "./logger";
 const consoles: { [Key: string]: ChildProcessWithoutNullStreams } = {}
 
 // funciona 
-export function spawConsole(command: string, dir: string) { 
-    log(LogLevel.INFO, `Executing command:  ${command} in directory: ${dir}`);
+export function spawConsole(command: string, dir: string, responses: string[] = []) { 
+    log(LogLevel.INFO, `Executing command:  ${command} in directory: ${dir}, responses ${responses}`);
     try {
+        return new Promise((resolve, reject) => {
 
-        const child = spawn('cmd.exe', ['/c', `start cmd.exe /k "cd /d ${dir} && ${command}"`], {
-            shell: true,
-            detached: true,
-            stdio: 'pipe'
+            const child = spawn('cmd.exe', ['/c', `start cmd.exe /k "cd /d ${dir} && ${command}"`], {
+                shell: true,
+                detached: false, 
+                stdio: ['pipe', 'pipe', 'pipe'] 
+            })
+        
+            consoles[dir] = child
+            let index = 0; // Índice para controlar el orden de respuestas
+
+            child.stdout.on('data', (data) => {
+                console.log(data.toString());
+                // Si hay respuestas disponibles, las enviamos en orden
+                if (index < responses.length) {
+                    setTimeout(() => {
+                        console.log(`Respondiendo: ${responses[index]}`);
+                        child.stdin.write(responses[index] + '\n'); // Enviar la respuesta con Enter
+                        index++; // Pasar a la siguiente respuesta
+                    }, 1000); // Pequeño retraso para evitar problemas
+                }
+            })
+
+            child.stderr.on('data', (data) => {
+                console.error('Error:', data.toString());
+                reject(new Error(data.toString()));
+            });
+
+            child.on('close', (code) => {
+                resolve(`Proceso finalizado con código ${code}`);
+            });
+
+            child.on('error', (error) => {
+                console.error('Error:', error);
+                reject(error);
+            });
+
+           
         })
-    
-        child.on('data', (data) => {
-            console.log('Data: ', data)
-        })
-    
-        child.on('exit', (code) => {
-            console.log('Exit: ', code)
-        })
-    
-        return child.stdio
     } catch (error) {
         throw new Error(`Error executing command: ${ error instanceof Error ? error.message : error}`)
     }

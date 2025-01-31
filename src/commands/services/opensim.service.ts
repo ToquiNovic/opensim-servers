@@ -13,12 +13,23 @@ import {  spawConsole } from "../../utils/childProcess"
 
 // }
 
-export function stopOpensim(dir: string) {
-    const direcc = dir + '\\bin'
-    console.log('Stopping opensim',direcc)
-    const command = 'opensim.exe'
+// export function stopOpensim(dir: string) {
+//     const direcc = dir + '\\bin'
+//     console.log('Stopping opensim',direcc)
+//     const command = 'opensim.exe'
+//     try {
+//         const output = spawConsole(command,direcc)
+//         console.log(output)
+//     } catch (error) {
+//         console.log(error)
+//     }
+// }
+
+export async function stopOpensim(dir: string) {
+    console.log('Stopping opensim',dir)
+    const command = 'npm create astro@latest'
     try {
-        const output = spawConsole(command,direcc)
+        const output = await spawConsole(command,dir, ['pepe'])
         console.log(output)
     } catch (error) {
         console.log(error)
