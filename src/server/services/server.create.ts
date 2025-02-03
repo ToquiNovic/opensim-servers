@@ -6,20 +6,20 @@ import { GitClone } from "./git";
 
 
 interface ICreateServerService {
-    gridName: string,
+    gridname: string,
     dataBaseName: string
 }
 
-export async function CreateServerService({ gridName, dataBaseName }: ICreateServerService) {
-    log(LogLevel.INFO, 'Creating server', gridName);
-    const { serverPath } = Directory.getRootPath(gridName)
+export async function CreateServerService({ gridname, dataBaseName }: ICreateServerService) {
+    log(LogLevel.INFO, 'Creating server', gridname);
+    const { serverPath } = Directory.getRootPath(gridname)
 
     if (await DBService.check(dataBaseName)) {
         throw new BadRequestError(`Database ${dataBaseName} already exists`);
     }
 
     if (Directory.checkExists(serverPath)) {
-        throw new BadRequestError(`Server with grid name ${gridName} already exists`);
+        throw new BadRequestError(`Server with grid name ${gridname} already exists`);
     }
 
     try {

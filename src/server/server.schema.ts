@@ -5,7 +5,7 @@ export const CreateServerSchema = object({
         port: string({
             required_error: 'Port is required'
         }),
-        gridName: string({
+        gridname: string({
             required_error: 'Grid Name is required'
         }),
         dataBaseName: string({

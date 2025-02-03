@@ -32,7 +32,7 @@ class DBService {
     async drop(dbName: string): Promise<void> {
         try {
             const command = `mysql -u ${DBConfig.USER} -p"${DBConfig.PASS}" -e "DROP DATABASE ${dbName};"`
-            await execute(command, 'src/utils')
+            await execute(command, DBConfig.BIN_PATH)
         } catch (error) {
             if (error instanceof Error) {
                 throw new CustomError(`Error deleting database: ${error.message}`, 500);

@@ -28,9 +28,9 @@ function writeFile(filePath: string, content: string) {
 }
 
 export function ConfigServer(config: CreateServerDto) {
-    log(LogLevel.INFO, 'Configuring server', config.gridName);
+    log(LogLevel.INFO, 'Configuring server', config.gridname);
     // Path
-    const { serverPath, regionPath, worldPath } = Directory.getRootPath(config.gridName)
+    const { serverPath, regionPath, worldPath } = Directory.getRootPath(config.gridname)
 
     // Create server folder
     createDirectoryIfNotExist(serverPath)

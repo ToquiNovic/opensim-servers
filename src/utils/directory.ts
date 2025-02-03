@@ -34,6 +34,25 @@ async function DirectoryStructure(dir: string): Promise<IFile> {
     }
 }
 
+/**
+ * Extracts the database name from a file content.
+ * @param content - The file content.
+ * @returns The database name.
+ */
+function extractDbName(content: string) {
+    try {
+        const match = content.match(/Database=(.*?);/)
+        if (match && match[1]) {
+            return match[1]
+        }
+    } catch (error) {
+        throw new CustomError(`Error extracting database name ${content}: ${(error as Error).message}`, 500);
+    }
+}
+
+
+
+
 class Directory {
     /**
      * Gets the root path and related paths.
@@ -72,11 +91,7 @@ class Directory {
      * @returns An object containing the grid name and server path or an error message.
      */
     getServerByGridName(gridName: string) {
-        const { serverPath } = this.getRootPath(gridName)
-        if (!fs.existsSync(serverPath)) {
-            throw new NotFoundError("Server not found");
-        }
-
+        const serverPath = this.isDirectory(gridName)
         return { gridName, serverPath }
     }
 
@@ -86,12 +101,7 @@ class Directory {
      * @returns A promise that resolves to the directory structure or an error message.
      */
     async getServerFiles(gridName: string) {
-        const { serverPath } = this.getRootPath(gridName)
-
-        if (!fs.existsSync(serverPath)) {
-            throw new NotFoundError("Server not found");
-        }
-
+        const serverPath = this.isDirectory(gridName)
         return await DirectoryStructure(serverPath)
     }
 
@@ -102,12 +112,8 @@ class Directory {
      * @returns An object containing the file content or an error message.
      */
     searchServerFile(gridName: string, file: string) {
-        const { serverPath } = this.getRootPath(gridName)
+        const serverPath = this.isDirectory(gridName)
         const filePath = path.join(serverPath, file)
-
-        if (!fs.existsSync(serverPath)) {
-            throw new NotFoundError("Server not found");
-        }
 
         if (!fs.existsSync(filePath)) {
             throw new NotFoundError("File not found");
@@ -121,24 +127,53 @@ class Directory {
         }
     }
 
+    /**
+     * Deletes a directory of server.
+     * @param dir - The directory path.
+     * @returns The server path and databse name or an error message. 
+     */
     delete(dir: string) {
-        return `Delete server by gridName ${dir}`;
+        const serverPath = this.isDirectory(dir)
+        const file = this.searchServerFile(dir, 'bin/config-include/MyWorld.ini')
+        const dbname = extractDbName(file.content)
+
+        fs.rm(serverPath, { recursive: true }, (error) => {
+            if (error) {
+                throw new CustomError(`Error deleting directory ${serverPath}: ${(error as Error).message}`, 500);
+            }
+        })
+
+        return { serverPath, dbname }
     }
+    /**
+   * Checks if a directory exists, and creates it if it doesn't.
+   * @param dir - The directory path.
+   */
+    checkExists(dir: string) {
+    if (!fs.existsSync(dir)) {
+        try {
+            fs.mkdirSync(dir, { recursive: true });
+        } catch (error) {
+            throw new CustomError(`Error creating directory ${dir}: ${(error as Error).message}`, 500);
+        }
+    } else {
+        return true;
+    }
+}
 
     /**
-     * Checks if a directory exists, and creates it if it doesn't.
-     * @param dir - The directory path.
+     * Checks if a directory exists.
+     * @param path - The directory path. 
+     * @returns - The server path or error.
      */
-    checkExists(dir: string) {
-        if (!fs.existsSync(dir)) {
-            try {
-                fs.mkdirSync(dir, { recursive: true });
-            } catch (error) {
-                throw new CustomError(`Error creating directory ${dir}: ${(error as Error).message}`, 500);
-            }
-        } else {
-            return true;
+    private isDirectory(path: string): string {
+        const { serverPath } = this.getRootPath(path)
+
+        if (!fs.existsSync(serverPath)) {
+            throw new NotFoundError("Server not found");
         }
+
+        return serverPath
     }
 }
 

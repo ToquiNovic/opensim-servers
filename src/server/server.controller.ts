@@ -40,13 +40,12 @@ class ServerController {
 
     delete = (req: Request, res: Response, next: NextFunction) => {
         const { gridname } = req.params
-        try {
-            const response = this.service.delete({ gridname })
+        this.service.delete({ gridname }).then((response) => {
             res.status(200).json(response)
-        } catch (error) {
-            log(LogLevel.ERROR, 'Deleting server:', (error as Error).message)
+        }).catch((error) => {
+            log(LogLevel.ERROR, 'Deleting server:', error.message)
             next(error)
-        }
+        })
     }
 
     getFiles = (req: Request, res: Response, next: NextFunction) => {

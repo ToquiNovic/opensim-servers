@@ -79,7 +79,14 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Server'
+                type: object
+                properties:
+                  Message:
+                    type: string
+                  status:
+                    type: string
+                  path:
+                    type: string
     delete:
       tags:
         - Server
@@ -111,7 +118,10 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ServerFiles'
+                type: object
+                properties:
+                  directory:
+                    type: object
 
   /server/file:
     post:
@@ -123,44 +133,32 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                gridname:
-                  type: string
-                filename:
-                  type: string
+              $ref: '#/components/schemas/ServerFindFile'
       responses:
         "201":
           description: File uploaded
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Directory'
+                type: object
+                properties:
+                  content:
+                    type: string
 
 components:
   schemas:
-    Server:
-      type: object
-      properties:
-        Message:
-          type: string
-        status:
-          type: string
-        path:
-          type: string
     CreateServer:
       type: object
+      required:
+       - port
+       - gridName
+       - dataBaseName
       properties:
         port:
           type: string
-        regionName:
-          type: string
-        uuid:
-          type: string
         coordinates:
           type: string
-        ip:
-          type: string
+          nullable: true
         gridName:
           type: string
         dataBaseHost:
@@ -174,17 +172,13 @@ components:
         dataBasePassword:
           type: string
           nullable: true
-    ServerFiles:
+    ServerFindFile:
       type: object
+      required:
+       - filename
+       - content
       properties:
-        directory1:
-          type: object
-        directory2:
-          type: object
-        directory3:
-          type: object
-    Directory:
-      type: object
-      properties:
+        filename:
+          type: string
         content:
           type: string

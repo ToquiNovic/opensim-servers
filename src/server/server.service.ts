@@ -1,7 +1,7 @@
 import { CreateServerDto, SearchFileDto } from "./server.dto";
-import { ConfigServer } from "./services/server.config";
-import { CreateServerService } from "./services/server.create";
+import { ConfigServer, CreateServerService, DeleteServer } from "./services";
 import directory from "../utils/directory";
+
 
 export class ServerService {
 
@@ -20,8 +20,8 @@ export class ServerService {
         return server;
     }
 
-    delete({ gridname }: { gridname: string }) {
-        return directory.delete(gridname);
+    async delete({ gridname }: { gridname: string }) {
+        return await DeleteServer(gridname);
     }
 
     async getServerFiles({ gridname }: { gridname: string }) {

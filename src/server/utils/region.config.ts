@@ -1,10 +1,11 @@
+import { randomUUID } from 'node:crypto'
 interface RegionProps {
     gridname: string;
     coordinates: string;
     port?: string;
 }
 
-const uuid = "00000000-0000-0000-0000-000000000000";
+const uuid = randomUUID();
 
 export function regionConfig({gridname, coordinates = "2431,2338", port = "9000"}: RegionProps) {
     return `

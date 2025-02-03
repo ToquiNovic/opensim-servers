@@ -1,3 +1,4 @@
+import { getIp } from '../../utils/os';
 import { DBConfig } from '../../config/config';
 
 interface IWorldConfigProps {
@@ -8,7 +9,7 @@ interface IWorldConfigProps {
     dataBaseUser?: string;
     dataBasePassword?: string;
 }
-const ip = "192.168.1.1"
+const ip = getIp()
 
 export function WorldInit({ 
     port = "9000", 
