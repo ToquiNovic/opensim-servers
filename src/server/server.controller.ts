@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { ServerService } from "./server.service";
 import { CreateServerDto, SearchFileDto } from "./server.dto";
-import { log, LogLevel } from "../utils/logger";
+import { log, LogLevel, Status } from "../utils/logger";
 
 class ServerController {
     constructor(private service: ServerService = new ServerService()) {
@@ -12,7 +12,7 @@ class ServerController {
         try {
             res.status(200).json(this.service.getServers())
         } catch (error) {
-            log(LogLevel.ERROR, 'Getting servers:', (error as Error).message)
+            log(LogLevel.ERROR, 'Getting servers:', { message: (error as Error).message })
             next(error)
         }
     }
@@ -22,7 +22,7 @@ class ServerController {
             const { gridname } = req.params
             res.status(200).json(this.service.findOne({ gridname }))
         } catch (error) {
-            log(LogLevel.ERROR, 'Getting server:', (error as Error).message)
+            log(LogLevel.ERROR, 'Getting server:', { message: (error as Error).message })
             next(error)
         }
 
@@ -33,7 +33,7 @@ class ServerController {
         this.service.create(createServer).then((response) => {
             res.status(201).json(response)
         }).catch((error) => {
-            log(LogLevel.ERROR, 'Creating server:', error.message)
+            log(LogLevel.ERROR, 'Creating server:', {server: createServer.gridname, state: Status.ERROR_CREATING_SERVER, message: error.message})
             next(error)
         })
     }
@@ -67,7 +67,7 @@ class ServerController {
             log(LogLevel.SUCCESS, 'Searching file: Success')
             res.status(200).json(response)
         } catch (error) {
-            log(LogLevel.ERROR, 'Searching file:', (error as Error).message)
+            log(LogLevel.ERROR, 'Searching file:',  { message: (error as Error).message })
             next(error)
         }
     }

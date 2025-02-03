@@ -5,7 +5,9 @@ info:
   version: "1.0.0"
 tags:
   - name: Server
-    description: API for managing servers
+    description: Server management
+  - name: Command
+    description: Command management
 paths:
   /server:
     get:
@@ -20,7 +22,11 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Server'
+                  properties:
+                    gridname:
+                      type: string
+                    serverPath:
+                      type: string
     put:
       tags:
         - Server
@@ -43,7 +49,14 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Server'
+                type: object
+                properties:
+                  Message:
+                    type: string
+                  status:
+                    type: string
+                  path:
+                    type: string
     post:
       tags:
         - Server
@@ -60,7 +73,14 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Server'
+                type: object
+                properties:
+                  Message:
+                    type: string
+                  status:
+                    type: string
+                  path:
+                    type: string
 
   /server/{gridname}:
     get:
@@ -81,11 +101,9 @@ paths:
               schema:
                 type: object
                 properties:
-                  Message:
+                  gridname:
                     type: string
-                  status:
-                    type: string
-                  path:
+                  serverPath:
                     type: string
     delete:
       tags:
@@ -100,6 +118,13 @@ paths:
       responses:
         "200":
           description: Server deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
 
   /server/files/{gridname}:
     get:
@@ -145,6 +170,33 @@ paths:
                   content:
                     type: string
 
+  /command:
+    post:
+      tags:
+        - Command
+      summary: Execute command on server
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                command:
+                  type: string
+                gridname:
+                  type: string
+      responses:
+        "201":
+          description: Command executed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
 components:
   schemas:
     CreateServer:
@@ -178,7 +230,7 @@ components:
        - filename
        - content
       properties:
-        filename:
+        gridname:
           type: string
-        content:
+        filename:
           type: string

@@ -1,8 +1,25 @@
+import DBService from '../utils/dataBase'
+
 export enum LogLevel {
     INFO = 'INFO',
     SUCCESS = 'SUCCESS',
     ERROR = 'ERROR',
     WARNING = 'WARNING'
+}
+
+export enum Status {
+    CREATING_SERVER = 'CREATING_SERVER',
+    CLONING_REPOSITORY = 'CLONING_REPOSITORY',
+    REPOSITORY_CLONED = 'REPOSITORY_CLONED',
+    CREATING_DATABASE = 'CREATING_DATABASE',
+    DATABASE_CREATED = 'DATABASE_CREATED',
+    SERVER_CREATED = 'SERVER_CREATED',
+
+    CONFIGURING_SERVER = 'CONFIGURING_SERVER',
+    WRITTIN_FILES = 'WRITTIN_FILES',
+    SERVER_CONFIGURATION_COMPLETED = 'SERVER_CONFIGURATION_COMPLETED',
+
+    ERROR_CREATING_SERVER = 'ERROR_CREATING_SERVER',
 }
 
 const colors: { [key in LogLevel]: string } = {
@@ -12,6 +29,18 @@ const colors: { [key in LogLevel]: string } = {
     [LogLevel.WARNING]: '\x1b[33m'
 };
 
-export function log(level: LogLevel, message: string, ...optionalParams: any[]) {
-    console.log(`${colors[level]}[%s]\x1b[0m`, level, message, ...optionalParams);
+interface IOptions {
+    server?: string
+    state?: Status
+    message?: string
+}
+
+export function log(level: LogLevel, message: string,  optinalParams: IOptions = {}) {
+    const { server, state } = optinalParams
+    
+    if (server){
+        DBService.logStatus(server, state || level);
+    }
+
+    console.log(`${colors[level]}[%s]\x1b[0m`, level, message, ...(optinalParams.message ? [optinalParams.message] : []));
 }

@@ -1,7 +1,7 @@
 import { regionConfig, WorldInit } from "../utils";
 import { CustomError } from "../../middlewares/global-errors";
 import { CreateServerDto } from "../server.dto";
-import { log, LogLevel } from "../../utils/logger";
+import { log, LogLevel, Status } from "../../utils/logger";
 import Directory from "../../utils/directory";
 import path from "node:path";
 import fs from 'node:fs'
@@ -28,7 +28,7 @@ function writeFile(filePath: string, content: string) {
 }
 
 export function ConfigServer(config: CreateServerDto) {
-    log(LogLevel.INFO, 'Configuring server', config.gridname);
+    log(LogLevel.INFO, 'Configuring server', {server: config.gridname, state: Status.CONFIGURING_SERVER, message: config.gridname} );
     // Path
     const { serverPath, regionPath, worldPath } = Directory.getRootPath(config.gridname)
 
@@ -47,7 +47,7 @@ export function ConfigServer(config: CreateServerDto) {
     writeFile(regionPath, regionContent)
     writeFile(worldPath, worldContent)
 
-    log(LogLevel.SUCCESS, 'Server configuration completed successfully!');
+    log(LogLevel.SUCCESS, 'Server configuration completed successfully!', {server: config.gridname, state: Status.SERVER_CONFIGURATION_COMPLETED});
 
     return { regionPath, worldPath }
 }

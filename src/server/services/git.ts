@@ -10,13 +10,14 @@ export async function GitClone(dir: string) {
         const parts = dir.split(path.sep);
         const lastTwoLevels = parts.slice(-2).join(path.sep);
         const command = `git clone ${GitConfig.repository} ../${lastTwoLevels}`;
-        log(LogLevel.INFO, 'Execute command:', command);
+        log(LogLevel.INFO, 'Execute command:', {message: command});
         await execute(command, path.dirname(dir))
         return {
             "Message": `Repository ${GitConfig.repository} cloned successfully`,
             "Status": "Success",
             "Path": dir
         }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
         if (fs.existsSync(dir)) {
             fs.rmSync(dir, { recursive: true });

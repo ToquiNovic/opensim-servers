@@ -12,7 +12,7 @@ export const GitConfig = {
 
 export const DBConfig = {
     BIN_PATH: path.resolve(process.env.DB_BIN_PATH || '/usr/bin/mysql'),
-    URL: process.env.DB_URL || 'mysql://root:@localhost:3306',
+    NAME: process.env.DB_NAME || 'ua3d_core',
     HOST: process.env.DB_HOST || 'localhost',
     USER: process.env.DB_USER || 'root',
     PASS: process.env.DB_PASSWORD || '',

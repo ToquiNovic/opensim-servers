@@ -5,9 +5,7 @@ import DbService from '../../utils/dataBase'
 
 export async function DeleteServer(gridname: string) {
     try {
-        console.log("Eliminando server ", gridname)
        const dir = Directory.delete(gridname)
-        console.log("Eliminado server ", dir)
 
         if (!dir) {
             throw new BadRequestError(`Server not delete: ${gridname}`)
