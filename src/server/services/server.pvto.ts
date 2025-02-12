@@ -2,7 +2,7 @@ import { BadRequestError } from "../../middlewares/global-errors";
 import { log,  LogLevel } from '../../utils/logger'
 import { EnvConfig } from "../utils/env.config";
 import { DataServerDto } from "../server.dto";
-import { execute } from "../../utils";
+import { spawnn } from "../../utils";
 import Directory from "../../utils/directory";
 import path from 'node:path'
 
@@ -19,12 +19,12 @@ export function ConfigurePvto(dir: string, data: DataServerDto): void {
     }
 }
 
-export async  function StartPvto(dir: string): Promise<void>{
+export  function StartPvto(dir: string): void{
     try {
         log(LogLevel.WARNING, `Starting pvto in ${dir}`)
-        const res = await execute('python main.py', dir)
-        log(LogLevel.SUCCESS, `Pvto started`)
+        const res = spawnn('python main.py', dir)
         console.log(res)
+        log(LogLevel.SUCCESS, `Pvto started`)
     } catch (error) {
         throw new BadRequestError(`${(error as Error).message}`);
     }

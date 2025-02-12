@@ -1,4 +1,4 @@
-import { exec } from "node:child_process";
+import { exec, spawn } from "node:child_process";
 import { log, LogLevel } from "./logger";
 
 
@@ -16,16 +16,28 @@ export async function execute(command: string, directory: string): Promise<strin
             }
         })
     })
-
 }
 
-export async function killProcess(serverPath: string) {
-    log(LogLevel.WARNING, `Killing process: ${serverPath}`)
+export function spawnn(command: string, directory: string) {
+    try {
+        const process = spawn('cmd.exe', ['/c', 'start', 'cmd.exe', '/k', command], {
+            cwd: directory,
+            detached: true,
+            stdio: 'ignore'
+        });
+        process.unref(); // Unreference the child process so the parent can exit independently of the child 
+    } catch (error) {
+        log(LogLevel.ERROR, `Error executing command: ${error instanceof Error ? error.message : error}`)
+    }
+}
+
+export async function killProcess(directory: string) {
+    log(LogLevel.WARNING, `Killing process: ${directory}`)
     try {
         const command = process.platform === 'win32'
-            ? `wmic process where "ExecutablePath like '${serverPath}%' and not ExecutablePath like '%mic%'" delete`
-            : `pkill -f ${serverPath}`;
-        await execute(command, serverPath)
+            ? `wmic process where "ExecutablePath like '${directory}%' and not ExecutablePath like '%mic%'" delete`
+            : `pkill -f ${directory}`;
+        await execute(command, directory)
     } catch (error) {
         if (error instanceof Error) {
             log(LogLevel.ERROR, `Error killing process: ${error.message}`)

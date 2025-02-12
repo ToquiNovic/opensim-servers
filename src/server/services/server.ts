@@ -1,4 +1,4 @@
-import { CreateServerService, ConfigServerService, ConfigurePvto } from "./";
+import { CreateServerService, ConfigServerService, ConfigurePvto, StartPvto } from "./";
 import { BadRequestError } from "../../middlewares/global-errors";
 import { assembleSubmissionData } from "../utils";
 import { CreateServerDto } from "../server.dto";
@@ -16,7 +16,7 @@ export async  function authenticateAndCreateServer(createServerDto: CreateServer
         ConfigurePvto(server.pvtoPath, data) // create .env file
 
         // start pvto server
-        // await StartPvto(server.pvtoPath)
+        StartPvto(server.pvtoPath)
 
         return server
     } catch (error) {  
