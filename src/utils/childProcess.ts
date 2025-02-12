@@ -2,6 +2,8 @@ import { exec, ChildProcessWithoutNullStreams, spawn } from "node:child_process"
 import { log, LogLevel } from "./logger";
 
 const consoles: { [Key: string]: ChildProcessWithoutNullStreams } = {}
+// const consoles: { [key: string]: { pid: number, process: ChildProcessWithoutNullStreams } } = {};
+
 
 // funciona 
 export function spawConsole(command: string, dir: string, responses: string[] = []) { 
@@ -43,15 +45,28 @@ export function spawConsole(command: string, dir: string, responses: string[] = 
                 console.error('Error:', error);
                 reject(error);
             });
-
-           
         })
     } catch (error) {
         throw new Error(`Error executing command: ${ error instanceof Error ? error.message : error}`)
     }
+} 
+
+export function spawnn(command: string, dir: string) {
+    try {
+        const process =  spawn(command, [] , {cwd: dir, shell: true, stdio: 'pipe'})
+        process.stdout.on('data', (data) => {
+
+            process.stdin.write(' \n')
+            console.log("Stdout")
+            console.log(data.toString())
+        })
+
+    } catch (error) {
+        console.error(error)
+    }
 }
 
-
+// Funciona 
 export async function execute(command: string, directory: string): Promise<string> {
     const options = { cwd: directory }
     return new Promise((resolve, reject) => {

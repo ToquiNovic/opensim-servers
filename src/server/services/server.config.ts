@@ -1,6 +1,6 @@
 import { regionConfig, WorldInit } from "../utils";
 import { CustomError } from "../../middlewares/global-errors";
-import { CreateServerDto } from "../server.dto";
+import { DataServerDto } from "../server.dto";
 import { log, LogLevel, Status } from "../../utils/logger";
 import Directory from "../../utils/directory";
 import path from "node:path";
@@ -18,19 +18,11 @@ function createDirectoryIfNotExist(directory: string) {
     }
 }
 
-function writeFile(filePath: string, content: string) {
-    try {
-        fs.writeFileSync(filePath, content);
-        log(LogLevel.INFO, `File written: ${filePath}`);
-    } catch (error) {
-        throw new CustomError(`Error writing file: ${filePath}, ${(error as Error).message}`, 500);
-    }
-}
 
-export function ConfigServer(config: CreateServerDto) {
-    log(LogLevel.INFO, 'Configuring server', {server: config.gridname, state: Status.CONFIGURING_SERVER, message: config.gridname} );
+export function ConfigServerService(config: DataServerDto): void{
+    log(LogLevel.INFO, 'Configuring server', {server: config.id, state: Status.CONFIGURING_SERVER, message: config.gridName} );
     // Path
-    const { serverPath, regionPath, worldPath } = Directory.getRootPath(config.gridname)
+    const { serverPath, regionPath, worldPath } = Directory.getRootPath(config.gridName)
 
     // Create server folder
     createDirectoryIfNotExist(serverPath)
@@ -44,10 +36,8 @@ export function ConfigServer(config: CreateServerDto) {
     const worldContent = WorldInit(config)
 
     // Write files
-    writeFile(regionPath, regionContent)
-    writeFile(worldPath, worldContent)
+    Directory.writeFile(regionPath, regionContent)
+    Directory.writeFile(worldPath, worldContent)
 
-    log(LogLevel.SUCCESS, 'Server configuration completed successfully!', {server: config.gridname, state: Status.SERVER_CONFIGURATION_COMPLETED});
-
-    return { regionPath, worldPath }
+    log(LogLevel.SUCCESS, 'Server configuration completed successfully!', {server: config.id, state: Status.SERVER_CONFIGURATION_COMPLETED});
 }

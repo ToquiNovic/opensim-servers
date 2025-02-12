@@ -1,7 +1,6 @@
+import { DeleteServer, authenticateAndCreateServer } from "./services";
 import { CreateServerDto, SearchFileDto } from "./server.dto";
-import { ConfigServer, CreateServerService, DeleteServer } from "./services";
 import directory from "../utils/directory";
-
 
 export class ServerService {
 
@@ -9,27 +8,25 @@ export class ServerService {
         return directory.getServers();
     }
 
-    findOne({ gridname }: { gridname: string }) {
-        return directory.getServerByGridName(gridname);
+    findOne({ gridName }: { gridName: string }) {
+        return directory.getServerByGridName(gridName);
     }
 
     async create(createServer: CreateServerDto) {
-        createServer.dataBaseName = `ua3d_${createServer.dataBaseName}`
-        const server = await CreateServerService(createServer);
-        ConfigServer(createServer)
-        return server;
+        const data = await authenticateAndCreateServer(createServer);
+        return data
     }
 
-    async delete({ gridname }: { gridname: string }) {
-        return await DeleteServer(gridname);
+    async delete({ gridName }: { gridName: string }) {
+        return await DeleteServer(gridName);
     }
 
-    async getServerFiles({ gridname }: { gridname: string }) {
-        return await directory.getServerFiles(gridname)
+    async getServerFiles({ gridName }: { gridName: string }) {
+        return await directory.getServerFiles(gridName)
     }
 
     serverFile(searchFile: SearchFileDto) {
-        const { gridname, filename } = searchFile;
-        return directory.searchServerFile(gridname, filename);
+        const { gridName, filename } = searchFile;
+        return directory.searchServerFile(gridName, filename);
     }
 }

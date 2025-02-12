@@ -126,6 +126,13 @@ class Directory {
             throw new CustomError(`Error reading file ${filePath}: ${(error as Error).message}`, 500);
         }
     }
+    writeFile(filePath: string, content: string) {
+        try {
+            fs.writeFileSync(filePath, content);
+        } catch (error) {
+            throw new CustomError(`Error writing file: ${filePath}, ${(error as Error).message}`, 500);
+        }
+    }
 
     /**
      * Deletes a directory of server.

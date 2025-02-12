@@ -1,4 +1,4 @@
-import DBService from '../utils/dataBase'
+import { ApiStatusServer } from "./api";
 
 export enum LogLevel {
     INFO = 'INFO',
@@ -37,9 +37,8 @@ interface IOptions {
 
 export function log(level: LogLevel, message: string,  optinalParams: IOptions = {}) {
     const { server, state } = optinalParams
-    
     if (server){
-        DBService.logStatus(server, state || level);
+        ApiStatusServer(server, state || Status.CREATING_SERVER)
     }
 
     console.log(`${colors[level]}[%s]\x1b[0m`, level, message, ...(optinalParams.message ? [optinalParams.message] : []));

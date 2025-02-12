@@ -2,23 +2,21 @@ import { getIp } from '../../utils/os';
 import { DBConfig } from '../../config/config';
 
 interface IWorldConfigProps {
-    port?: string;
+    port?: number;
     gridName?: string;
-    dataBaseHost?: string;
     dataBaseName?: string;
-    dataBaseUser?: string;
-    dataBasePassword?: string;
 }
-const ip = getIp()
 
-export function WorldInit({ 
-    port = "9000", 
-    gridName, 
-    dataBaseHost = DBConfig.HOST, 
+export function WorldInit({
+    port = 9000,
+    gridName,
     dataBaseName,
-    dataBaseUser = DBConfig.USER, 
-    dataBasePassword = DBConfig.PASS
 }: IWorldConfigProps) {
+    const ip = getIp()
+    const dataBaseHost = DBConfig.HOST;
+    const dataBaseUser = DBConfig.USER;
+    const dataBasePassword = DBConfig.PASS;
+
     return `
     ; ### UA3D Configuration File
 [Startup]
@@ -53,7 +51,7 @@ ConnectionString = "Data Source=${dataBaseHost};Database=${dataBaseName};User ID
     ; OutboundPermission = False
 
 [DataSnapshot]
-    gridname = "${gridName}"
+    gridName = "${gridName}"
 
 [UserProfiles]
   ProfileServiceURL = "http://${ip}:${port}"
@@ -108,7 +106,7 @@ ConnectionString = "Data Source=${dataBaseHost};Database=${dataBaseName};User ID
 
 [GridInfoService]
     login = http://${ip}:${port}/
-    gridname = "${gridName}"
+    gridName = "${gridName}"
     gridnick = "test_udla"
     welcome = http://${ip}:${port}/wifi/welcome.html
     register = http://${ip}:${port}/wifi/user/account

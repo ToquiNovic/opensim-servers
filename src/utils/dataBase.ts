@@ -1,32 +1,18 @@
-import { DBConfig } from "../config/config";
 import { CustomError } from "../middlewares/global-errors";
+import { log, LogLevel, Status } from "./logger";
+import { DBConfig } from "../config/config";
 import { execute } from "./childProcess";
 
 const mysql = `mysql -u ${DBConfig.USER} -p"${DBConfig.PASS}"`
-const mysqlDb =`mysql -u ${DBConfig.USER} -p"${DBConfig.PASS}" -D ${DBConfig.NAME}`
-
-async function getStatusId(statusName: string) {
-    try {
-        const command = `${mysqlDb} -e "SELECT id_serverstatus FROM serverstatus WHERE name_serverstatus = '${statusName}';"`
-        const result = await execute(command, DBConfig.BIN_PATH)
-        const match = result.match(/(\d+)/)
-        if (match) {
-            return parseInt(match[1], 10)
-        } else {
-            throw new CustomError(`Status name ${statusName} not found`, 404)
-        }
-    } catch (error) {
-        if (error instanceof Error) {
-            throw new CustomError(`Error getting status ID: ${error.message}`, 500);
-        }
-    }
-}
 
 class DBService {
-    async create(dbName: string) {
+    async create(dbName: string, gridName: string) {
         try {
+            log(LogLevel.INFO, 'Creating database', { server: gridName, state: Status.CREATING_DATABASE });
             const command = `${mysql} -e "CREATE DATABASE ${dbName};"`
             await execute(command, DBConfig.BIN_PATH)
+            log(LogLevel.SUCCESS, 'Database created successfully!', { server: gridName, state: Status.DATABASE_CREATED });
+
             return { message: `Database ${dbName} created successfully.` }
         } catch (error) {
             if (error instanceof Error) {
@@ -56,18 +42,6 @@ class DBService {
         } catch (error) {
             if (error instanceof Error) {
                 throw new CustomError(`Error deleting database: ${error.message}`, 500);
-            }
-        }
-    }
-
-    async logStatus(serverName: string, message: string): Promise<void> {
-        try {
-            const statusId = await getStatusId(message)
-            const command = `${mysqlDb}  -e "UPDATE server SET statusid_server = ${statusId} WHERE id_server = '${serverName}';"`
-            await execute(command, DBConfig.BIN_PATH)
-        } catch (error) {
-            if (error instanceof Error) {
-                throw new CustomError(`Error logging status: ${error.message}`, 500);
             }
         }
     }

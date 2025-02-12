@@ -1,5 +1,5 @@
 // import { CustomError } from "../../middlewares/global-errors"
-import {  spawConsole } from "../../utils/childProcess"
+import {  spawnn } from "../../utils/childProcess"
 
 
 // export async function runOpenSim(dir: string, responses: string[]) {
@@ -27,9 +27,9 @@ import {  spawConsole } from "../../utils/childProcess"
 
 export async function stopOpensim(dir: string) {
     console.log('Stopping opensim',dir)
-    const command = 'npm create astro@latest'
+    const command = 'opensim.exe'
     try {
-        const output = await spawConsole(command,dir, ['pepe'])
+        const output = spawnn(command,dir)
         console.log(output)
     } catch (error) {
         console.log(error)

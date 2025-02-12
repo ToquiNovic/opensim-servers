@@ -1,41 +1,52 @@
-import Directory from "../../utils/directory";
-import DBService from '../../utils/dataBase'
 import { CustomError, BadRequestError } from "../../middlewares/global-errors";
 import { log, LogLevel, Status} from "../../utils/logger";
+import { GitConfig } from "../../config/config";
+import Directory from "../../utils/directory";
+import DBService from '../../utils/dataBase'
 import { GitClone } from "./git";
-
+import path from 'node:path'
 
 interface ICreateServerService {
-    gridname: string,
-    dataBaseName: string
+    id: string,
+    gridName: string,
+    dataBaseName: string,
+    dataSource: string
 }
 
-export async function CreateServerService({ gridname, dataBaseName }: ICreateServerService) {
-    log(LogLevel.INFO, 'Creating server', {server: gridname, state: Status.CREATING_SERVER});
-    const { serverPath } = Directory.getRootPath(gridname)
+const Core = GitConfig.Core
+const Pvto = GitConfig.Pvto
 
-    if (await DBService.check(dataBaseName)) {
+export async function CreateServerService({ gridName, dataBaseName, dataSource, id }: ICreateServerService) {
+    log(LogLevel.INFO, 'Creating server', {server: id, state: Status.CREATING_SERVER});
+    const pvtoPath = path.join(dataSource, 'pvto') // Pvto path
+
+    if (await DBService.check(dataBaseName)) { // Check if database exists
         throw new BadRequestError(`Database ${dataBaseName} already exists`);
     }
 
-    if (Directory.checkExists(serverPath)) {
-        throw new BadRequestError(`Server with grid name ${gridname} already exists`);
+    if (Directory.checkExists(dataSource)) { // Check if server exists
+        throw new BadRequestError(`Server with grid name ${gridName} already exists`);
     }
 
     try {
-        log(LogLevel.INFO, 'Cloning repository', {server: gridname, state: Status.CLONING_REPOSITORY});
-        const repository = await GitClone(serverPath);
-        if (repository.Status !== "Success") {
-            throw new CustomError(repository.Message, 500);
+        // Clone Core
+        const core = await GitClone(dataSource, id, Core);
+        if (core.Status !== "Success") {
+            throw new CustomError(core.Message, 500);
         }
-        log(LogLevel.SUCCESS, 'Repository cloned successfully!', {server: gridname, state: Status.REPOSITORY_CLONED});
 
-        log(LogLevel.INFO, 'Creating database', {server: gridname, state: Status.CREATING_DATABASE});
-        await DBService.create(dataBaseName);
-        log(LogLevel.SUCCESS, 'Database created successfully!', {server: gridname, state: Status.DATABASE_CREATED});
-        log(LogLevel.SUCCESS, 'Server created successfully!', {server: gridname, state: Status.SERVER_CREATED});
-
-        return repository;
+        // Clone Pvto
+        const pvto = await GitClone(pvtoPath, id, Pvto);
+        if (pvto.Status !== "Success") {
+            throw new CustomError(pvto.Message, 500);
+        }
+ 
+        // Create database
+        await DBService.create(dataBaseName, gridName);
+        
+        // return server
+        log(LogLevel.SUCCESS, 'Server created successfully!', {server: id, state: Status.SERVER_CREATED});
+        return {...core, pvtoPath};
     } catch (error) {
         throw new CustomError(`Error creating server: ${(error as Error).message}`, 500);
     }

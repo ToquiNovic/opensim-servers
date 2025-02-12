@@ -1,20 +1,18 @@
-import { randomUUID } from 'node:crypto'
 interface RegionProps {
-    gridname: string;
-    coordinates: string;
-    port?: string;
+    gridName: string;
+    port?: number;
+    uuid?:string
 }
 
-const uuid = randomUUID();
-
-export function regionConfig({gridname, coordinates = "2431,2338", port = "9000"}: RegionProps) {
+export function regionConfig({gridName, port = 9000, uuid}: RegionProps) {
+    const coordinates = "2431,2338";
     return `
-; ### Region ${gridname}
+; ### Region ${gridName}
 
 ; * Regions configuration file
 ; * This is Your World
 
-[${gridname}]
+[${gridName}]
 RegionUUID = ${uuid}
 Location = "${coordinates}"
 SizeX = 512

@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { ServerService } from "./server.service";
 import { CreateServerDto, SearchFileDto } from "./server.dto";
-import { log, LogLevel, Status } from "../utils/logger";
+import { log, LogLevel } from "../utils/logger";
 
 class ServerController {
     constructor(private service: ServerService = new ServerService()) {
@@ -19,8 +19,8 @@ class ServerController {
 
     getByGridName = (req: Request, res: Response, next: NextFunction) => {
         try {
-            const { gridname } = req.params
-            res.status(200).json(this.service.findOne({ gridname }))
+            const { gridName } = req.params
+            res.status(200).json(this.service.findOne({ gridName }))
         } catch (error) {
             log(LogLevel.ERROR, 'Getting server:', { message: (error as Error).message })
             next(error)
@@ -33,14 +33,14 @@ class ServerController {
         this.service.create(createServer).then((response) => {
             res.status(201).json(response)
         }).catch((error) => {
-            log(LogLevel.ERROR, 'Creating server:', {server: createServer.gridname, state: Status.ERROR_CREATING_SERVER, message: error.message})
+            log(LogLevel.ERROR, 'Creating server:', { message: error.message})
             next(error)
         })
     }
 
     delete = (req: Request, res: Response, next: NextFunction) => {
-        const { gridname } = req.params
-        this.service.delete({ gridname }).then((response) => {
+        const { gridName } = req.params
+        this.service.delete({ gridName }).then((response) => {
             res.status(200).json(response)
         }).catch((error) => {
             log(LogLevel.ERROR, 'Deleting server:', error.message)
@@ -49,8 +49,8 @@ class ServerController {
     }
 
     getFiles = (req: Request, res: Response, next: NextFunction) => {
-        const { gridname } = req.params
-        this.service.getServerFiles({ gridname }).then((response) => {
+        const { gridName } = req.params
+        this.service.getServerFiles({ gridName }).then((response) => {
             log(LogLevel.SUCCESS, 'Searching file: Success')
             res.status(200).json(response)
         }).catch((error) => {
