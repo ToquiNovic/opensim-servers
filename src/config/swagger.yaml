@@ -6,8 +6,6 @@ info:
 tags:
   - name: Server
     description: Server management
-  - name: Command
-    description: Command management
 paths:
   /server:
     get:
@@ -22,11 +20,7 @@ paths:
               schema:
                 type: array
                 items:
-                  properties:
-                    gridname:
-                      type: string
-                    serverPath:
-                      type: string
+                    $ref: '#/components/schemas/GerServer'
     put:
       tags:
         - Server
@@ -77,18 +71,24 @@ paths:
                 properties:
                   Message:
                     type: string
+                    example: Server created
                   status:
                     type: string
+                    example: success
                   path:
                     type: string
+                    example: C:/home/username/server
+                  pvtoPath:
+                    type: string
+                    example: C:/home/username/server/pvto
 
-  /server/{gridname}:
+  /server/{gridName}:
     get:
       tags:
         - Server
       summary: Get server by grid name
       parameters:
-        - name: gridname
+        - name: gridName
           in: path
           required: true
           schema:
@@ -99,18 +99,13 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  gridname:
-                    type: string
-                  serverPath:
-                    type: string
+                $ref: '#/components/schemas/GerServer'
     delete:
       tags:
         - Server
       summary: Delete server by grid name
       parameters:
-        - name: gridname
+        - name: gridName
           in: path
           required: true
           schema:
@@ -125,14 +120,15 @@ paths:
                 properties:
                   message:
                     type: string
+                    example: Server deleted
 
-  /server/files/{gridname}:
+  /server/files/{gridName}:
     get:
       tags:
         - Server
       summary: Get server files by grid name
       parameters:
-        - name: gridname
+        - name: gridName
           in: path
           required: true
           schema:
@@ -170,33 +166,6 @@ paths:
                   content:
                     type: string
 
-  /command:
-    post:
-      tags:
-        - Command
-      summary: Execute command on server
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                command:
-                  type: string
-                gridname:
-                  type: string
-      responses:
-        "201":
-          description: Command executed
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-
 components:
   schemas:
     CreateServer:
@@ -207,23 +176,23 @@ components:
        - dataBaseName
       properties:
         port:
-          type: string
-        coordinates:
-          type: string
-          nullable: true
+          type: number
+          example: 9000
         gridName:
           type: string
-        dataBaseHost:
+          example: "testServer"
+    GerServer:
+      type: object
+      properties:
+        gridName:
           type: string
-          nullable: true
-        dataBaseName:
+          example: "testServer"
+        serverPath:
           type: string
-        dataBaseUser:
+          example: "C:/home/username/server"
+        pvtoPath:
           type: string
-          nullable: true
-        dataBasePassword:
-          type: string
-          nullable: true
+          example: "C:/home/username/server/pvto"
     ServerFindFile:
       type: object
       required:
