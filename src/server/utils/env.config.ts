@@ -13,9 +13,11 @@ export function EnvConfig(data: DataServerDto, pvtoProps: PvtoProps = {}): strin
         pass = 'ADMIN@pvto123'
     } = pvtoProps
 
+    const opensimDir = `${data.dataSource}/bin`
+
     return `
 # OPENSIM PATH
-OPEN_SIM_DIR= ${data.dataSource ? data.dataSource : '/home/opensim'}
+OPEN_SIM_DIR= ${opensimDir}
 OPEN_SIM_EXECUTABLE= OpenSim.exe
 
 # API CONFIG
