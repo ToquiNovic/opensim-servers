@@ -36,7 +36,7 @@ interface IOptions {
 export function log(level: LogLevel, message: string, optinalParams: IOptions = {}) {
     const { server, state } = optinalParams
     if (server) {
-        ApiStatusServer(server, state || Status.CREATING_SERVER)
+        ApiStatusServer(server, state ?? '')
     }
 
     console.log(`${colors[level]}[%s]\x1b[0m`, level, message, ...(optinalParams.message ? [optinalParams.message] : []));

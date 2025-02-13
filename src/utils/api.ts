@@ -22,9 +22,9 @@ export const ApiStatusServer = async (id: string, status: string) => {
             headers: { Authorization: `Bearer ${accessToken}` }
         })).data.id
 
-        const server = await axios.put(`${ApiConfig.url}/server`, { id, statusId }, {
+        const server = (await axios.put(`${ApiConfig.url}/servers`, { id, statusId }, {
             headers: { Authorization: `Bearer ${accessToken}` }
-        }).then(res => res.data);
+        })).data
 
         return server;
     } catch (error) {
