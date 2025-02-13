@@ -11,13 +11,10 @@ export async  function authenticateAndCreateServer(createServerDto: CreateServer
         data.id = apiResponse.id // set id from api response
         const server = await CreateServerService(data)
         ConfigServerService(data)
-
         // create pvto server
         ConfigurePvto(server.pvtoPath, data) // create .env file
-
         // start pvto server
-        StartPvto(server.pvtoPath)
-
+        StartPvto(server.pvtoPath, data.id)
         return server
     } catch (error) {  
        throw new BadRequestError(`${(error as Error).message}`);
