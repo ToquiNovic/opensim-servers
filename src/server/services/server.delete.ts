@@ -2,7 +2,7 @@
 import { BadRequestError } from '../../middlewares/global-errors'
 import Directory from '../../utils/directory'
 import DbService from '../../utils/dataBase'
-import { killProcess } from '@/utils'
+import { killProcess } from '../../utils'
 
 export async function DeleteServer(gridName: string) {
     try {
