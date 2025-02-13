@@ -2,7 +2,7 @@ import { DataServerDto } from "../server.dto";
 import { PvtoConfig } from "../../config/config";
 
 export function EnvConfig(data: DataServerDto): string {
-    const opensimDir = `${data.dataSource}/bin`
+    const opensimDir = `${data.dataSource}\\bin`
 
     return `
 # OPENSIM PATH

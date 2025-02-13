@@ -1,5 +1,6 @@
 import { exec, spawn } from "node:child_process";
 import { log, LogLevel } from "./logger";
+import { BadRequestError } from "@/middlewares/global-errors";
 
 
 // Funciona 
@@ -10,7 +11,7 @@ export async function execute(command: string, directory: string): Promise<strin
         exec(command, options, (error, stdout, stderr) => {
             if (error) {
                 log(LogLevel.ERROR, `Error executing command: ${error.message}`)
-                reject(new Error(`Error executing command: ${stderr}`))
+                reject(new BadRequestError(`Error executing command: ${stderr}`))
             } else {
                 resolve(stdout)
             }
@@ -28,6 +29,7 @@ export function spawnn(command: string, directory: string): void {
         process.unref(); // Unreference the child process so the parent can exit independently of the child 
     } catch (error) {
         log(LogLevel.ERROR, `Error executing command: ${error instanceof Error ? error.message : error}`)
+        throw new BadRequestError(`Error executing command: ${error instanceof Error ? error.message : error}`)
     }
 }
 
@@ -41,7 +43,7 @@ export async function killProcess(directory: string) {
     } catch (error) {
         if (error instanceof Error) {
             log(LogLevel.ERROR, `Error killing process: ${error.message}`)
-            throw new Error(`Error killing process: ${error.message}`)
+            throw new BadRequestError(`Error killing process: ${error.message}`)
         }
     }
 }
