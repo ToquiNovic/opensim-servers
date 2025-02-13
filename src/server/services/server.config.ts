@@ -1,7 +1,7 @@
 import { regionConfig, WorldInit } from "../utils";
 import { CustomError } from "../../middlewares/global-errors";
 import { DataServerDto } from "../server.dto";
-import { log, LogLevel, Status } from "../../utils/logger";
+import { log, LogLevel } from "../../utils/logger";
 import Directory from "../../utils/directory";
 import path from "node:path";
 import fs from 'node:fs'
@@ -20,7 +20,6 @@ function createDirectoryIfNotExist(directory: string) {
 
 
 export function ConfigServerService(config: DataServerDto): void{
-    log(LogLevel.INFO, 'Configuring server', {server: config.id, state: Status.CONFIGURING_SERVER, message: config.gridName} );
     // Path
     const { serverPath, regionPath, worldPath } = Directory.getRootPath(config.gridName)
 
@@ -39,5 +38,5 @@ export function ConfigServerService(config: DataServerDto): void{
     Directory.writeFile(regionPath, regionContent)
     Directory.writeFile(worldPath, worldContent)
 
-    log(LogLevel.SUCCESS, 'Server configuration completed successfully!', {server: config.id, state: Status.SERVER_CONFIGURATION_COMPLETED});
+    log(LogLevel.SUCCESS, 'Server configuration completed successfully!');
 }

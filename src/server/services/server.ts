@@ -14,7 +14,7 @@ export async function authenticateAndCreateServer(createServerDto: CreateServerD
         // create pvto server
         ConfigurePvto(server.pvtoPath, data) // create .env file
         // start pvto server
-        StartPvto(server.pvtoPath, data.id)
+        await StartPvto(server.pvtoPath, data.id)
         return server
     } catch (error) {
         throw new BadRequestError(`${(error as Error).message}`);

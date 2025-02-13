@@ -8,10 +8,10 @@ const mysql = `mysql -u ${DBConfig.USER} -p"${DBConfig.PASS}"`
 class DBService {
     async create(dbName: string, id: string) {
         try {
-            log(LogLevel.INFO, 'Creating database', { server: id, state: Status.CREATING_DATABASE });
+            await log(LogLevel.INFO, 'Creating database', { server: id, state: Status.CREATING_DATABASE });
             const command = `${mysql} -e "CREATE DATABASE ${dbName};"`
             await execute(command, DBConfig.BIN_PATH)
-            log(LogLevel.SUCCESS, 'Database created successfully!', { server: id, state: Status.DATABASE_CREATED });
+            await log(LogLevel.SUCCESS, 'Database created successfully!', { server: id, state: Status.DATABASE_CREATED });
 
             return { message: `Database ${dbName} created successfully.` }
         } catch (error) {

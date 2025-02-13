@@ -19,11 +19,11 @@ export function ConfigurePvto(dir: string, data: DataServerDto): void {
     }
 }
 
-export function StartPvto(dir: string, id: string): void {
+export async function StartPvto(dir: string, id: string): Promise<void> {
     try {
         log(LogLevel.WARNING, `Starting pvto in ${dir}`)
         spawnn('python main.py', dir)
-        log(LogLevel.SUCCESS, `Pvto started`, { server: id, message: 'Pvto started', state: Status.SERVER_CONFIGURATION_COMPLETED })
+        await log(LogLevel.SUCCESS, `Pvto started`, { server: id, message: 'Pvto started', state: Status.SERVER_CONFIGURATION_COMPLETED })
     } catch (error) {
         throw new BadRequestError(`${(error as Error).message}`);
     }

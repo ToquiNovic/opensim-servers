@@ -17,7 +17,7 @@ const Core = GitConfig.Core
 const Pvto = GitConfig.Pvto
 
 export async function CreateServerService({ gridName, dataBaseName, dataSource, id }: ICreateServerService) {
-    log(LogLevel.INFO, 'Creating server', {server: id, state: Status.CREATING_SERVER});
+   await log(LogLevel.INFO, 'Creating server', {server: id, state: Status.CREATING_SERVER});
     const pvtoPath = path.join(dataSource, 'pvto') // Pvto path
 
     if (await DBService.check(dataBaseName)) { // Check if database exists
@@ -42,10 +42,10 @@ export async function CreateServerService({ gridName, dataBaseName, dataSource, 
         }
  
         // Create database
-        await DBService.create(dataBaseName, gridName);
+        await DBService.create(dataBaseName, id);
         
         // return server
-        log(LogLevel.SUCCESS, 'Server created successfully!', {server: id, state: Status.SERVER_CREATED});
+        await log(LogLevel.SUCCESS, 'Server created successfully!', {server: id, state: Status.SERVER_CREATED});
         return {...core, pvtoPath};
     } catch (error) {
         throw new CustomError(`Error creating server: ${(error as Error).message}`, 500);
