@@ -18,7 +18,7 @@ export async function execute(command: string, directory: string): Promise<strin
     })
 }
 
-export function spawnn(command: string, directory: string): void{
+export function spawnn(command: string, directory: string): void {
     try {
         const process = spawn('cmd.exe', ['/c', 'start', 'cmd.exe', '/k', command], {
             cwd: directory,

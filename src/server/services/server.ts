@@ -4,8 +4,8 @@ import { assembleSubmissionData } from "../utils";
 import { CreateServerDto } from "../server.dto";
 import { ApiCreateServer } from "../../utils";
 
-export async  function authenticateAndCreateServer(createServerDto: CreateServerDto) {
-    try{
+export async function authenticateAndCreateServer(createServerDto: CreateServerDto) {
+    try {
         const data = await assembleSubmissionData(createServerDto);
         const apiResponse = await ApiCreateServer(data);
         data.id = apiResponse.id // set id from api response
@@ -16,7 +16,7 @@ export async  function authenticateAndCreateServer(createServerDto: CreateServer
         // start pvto server
         StartPvto(server.pvtoPath, data.id)
         return server
-    } catch (error) {  
-       throw new BadRequestError(`${(error as Error).message}`);
+    } catch (error) {
+        throw new BadRequestError(`${(error as Error).message}`);
     }
 }

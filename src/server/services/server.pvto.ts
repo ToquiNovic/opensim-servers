@@ -1,5 +1,5 @@
 import { BadRequestError } from "../../middlewares/global-errors";
-import { log,  LogLevel, Status } from '../../utils/logger'
+import { log, LogLevel, Status } from '../../utils/logger'
 import { EnvConfig } from "../utils/env.config";
 import { DataServerDto } from "../server.dto";
 import { spawnn } from "../../utils";
@@ -19,13 +19,12 @@ export function ConfigurePvto(dir: string, data: DataServerDto): void {
     }
 }
 
-export  function StartPvto(dir: string, id: string): void{
+export function StartPvto(dir: string, id: string): void {
     try {
         log(LogLevel.WARNING, `Starting pvto in ${dir}`)
         spawnn('python main.py', dir)
-        log(LogLevel.SUCCESS, `Pvto started`, {server: id, message: 'Pvto started', state: Status.SERVER_CONFIGURATION_COMPLETED})
+        log(LogLevel.SUCCESS, `Pvto started`, { server: id, message: 'Pvto started', state: Status.SERVER_CONFIGURATION_COMPLETED })
     } catch (error) {
         throw new BadRequestError(`${(error as Error).message}`);
     }
-
 }

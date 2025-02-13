@@ -17,6 +17,12 @@ export const ApiConfig = {
     pass: process.env.API_PASSWORD || 'admin',
 }
 
+export const PvtoConfig = {
+    url: process.env.PVTO_BACK || 'http://localhost:5000',
+    user: process.env.PVTO_USER || 'admin',
+    pass: process.env.PVTO_PASS || 'admin',
+}
+
 export const DBConfig = {
     BIN_PATH: path.resolve(process.env.DB_BIN_PATH || '/usr/bin/mysql'),
     NAME: process.env.DB_NAME || 'ua3d_core',

@@ -18,7 +18,7 @@ const ApiAuthenticate = async () => {
 export const ApiStatusServer = async (id: string, status: string) => {
     const accessToken = await ApiAuthenticate();
     try {
-        const server = await axios.patch(`${ApiConfig.url}/server-status`, { id: id, name: status }, {
+        const server = await axios.put(`${ApiConfig.url}/server-status/${id}`, { name: status }, {
             headers: { Authorization: `Bearer ${accessToken}` }
         }).then(res => res.data);
 

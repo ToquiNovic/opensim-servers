@@ -1,18 +1,7 @@
 import { DataServerDto } from "../server.dto";
+import { PvtoConfig } from "../../config/config";
 
-interface PvtoProps {
-    url?: string;
-    user?: string;
-    pass?: string;
-}
-
-export function EnvConfig(data: DataServerDto, pvtoProps: PvtoProps = {}): string {
-    const {
-        url = 'http://131.100.50.247:3004',
-        user = 'pvto.manager',
-        pass = 'ADMIN@pvto123'
-    } = pvtoProps
-
+export function EnvConfig(data: DataServerDto): string {
     const opensimDir = `${data.dataSource}/bin`
 
     return `
@@ -24,9 +13,9 @@ OPEN_SIM_EXECUTABLE= OpenSim.exe
 FASTAPI_HOST= 0.0.0.0
 FASTAPI_PORT= ${data.pvtoPort ? data.pvtoPort : 5000}
 # UA3D CREDENTIALS
-UA3D_USER = ${user}
-UA3D_PASS = ${pass}
-UA3D_BACK = ${url}
+UA3D_USER = ${PvtoConfig.user}
+UA3D_PASS = ${PvtoConfig.pass}
+UA3D_BACK = ${PvtoConfig.url}
 ID_SERVER = ${data.id}
     `
 }

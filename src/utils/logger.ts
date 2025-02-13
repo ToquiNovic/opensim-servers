@@ -14,11 +14,9 @@ export enum Status {
     CREATING_DATABASE = 'CREATING_DATABASE',
     DATABASE_CREATED = 'DATABASE_CREATED',
     SERVER_CREATED = 'SERVER_CREATED',
-
     CONFIGURING_SERVER = 'CONFIGURING_SERVER',
     WRITTIN_FILES = 'WRITTIN_FILES',
     SERVER_CONFIGURATION_COMPLETED = 'SERVER_CONFIGURATION_COMPLETED',
-
     ERROR_CREATING_SERVER = 'ERROR_CREATING_SERVER',
 }
 
@@ -35,9 +33,9 @@ interface IOptions {
     message?: string
 }
 
-export function log(level: LogLevel, message: string,  optinalParams: IOptions = {}) {
+export function log(level: LogLevel, message: string, optinalParams: IOptions = {}) {
     const { server, state } = optinalParams
-    if (server){
+    if (server) {
         ApiStatusServer(server, state || Status.CREATING_SERVER)
     }
 
