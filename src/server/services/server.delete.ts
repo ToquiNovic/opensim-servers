@@ -2,22 +2,26 @@
 import { BadRequestError } from '../../middlewares/global-errors'
 import Directory from '../../utils/directory'
 import DbService from '../../utils/dataBase'
+import { killProcess } from '@/utils'
 
-export async function DeleteServer(gridname: string) {
+export async function DeleteServer(gridName: string) {
     try {
-       const dir = Directory.delete(gridname)
+        // Finalice the server process
+        const serverPath = Directory.isDirectory(gridName)
+        await killProcess(serverPath)
+
+        // Delete the server directory
+        const dir = Directory.delete(gridName)
 
         if (!dir) {
-            throw new BadRequestError(`Server not delete: ${gridname}`)
-        } 
+            throw new BadRequestError(`Server not delete: ${gridName}`)
+        }
 
-        //! Discutir si se pasa el nombre de la base de datos o se extrae del archjivo de configuracion 
         if (dir.dbname) {
             DbService.drop(dir.dbname)
-        } 
+        }
 
-        return { message: `Server ${gridname} deleted successfully.` }
-
+        return { message: `Server ${gridName} deleted successfully.` }
     } catch (error) {
         throw new BadRequestError(`Error deleting server: ${(error as Error).message}`)
     }

@@ -50,9 +50,6 @@ function extractDbName(content: string) {
     }
 }
 
-
-
-
 class Directory {
     /**
      * Gets the root path and related paths.
@@ -126,6 +123,12 @@ class Directory {
             throw new CustomError(`Error reading file ${filePath}: ${(error as Error).message}`, 500);
         }
     }
+
+    /**
+     * Writes a file to the server.
+     * @param filePath - The file path to write.
+     * @param content - The file content.
+     */
     writeFile(filePath: string, content: string) {
         try {
             fs.writeFileSync(filePath, content);
@@ -139,9 +142,9 @@ class Directory {
      * @param dir - The directory path.
      * @returns The server path and databse name or an error message. 
      */
-    delete(dir: string) {
-        const serverPath = this.isDirectory(dir)
-        const file = this.searchServerFile(dir, 'bin/config-include/MyWorld.ini')
+    delete(gridName: string) {
+        const serverPath = this.isDirectory(gridName)
+        const file = this.searchServerFile(gridName, 'bin/config-include/MyWorld.ini')
         const dbname = extractDbName(file.content)
 
         fs.rm(serverPath, { recursive: true }, (error) => {
@@ -152,28 +155,29 @@ class Directory {
 
         return { serverPath, dbname }
     }
+
     /**
    * Checks if a directory exists, and creates it if it doesn't.
    * @param dir - The directory path.
    */
     checkExists(dir: string) {
-    if (!fs.existsSync(dir)) {
-        try {
-            fs.mkdirSync(dir, { recursive: true });
-        } catch (error) {
-            throw new CustomError(`Error creating directory ${dir}: ${(error as Error).message}`, 500);
+        if (!fs.existsSync(dir)) {
+            try {
+                fs.mkdirSync(dir, { recursive: true });
+            } catch (error) {
+                throw new CustomError(`Error creating directory ${dir}: ${(error as Error).message}`, 500);
+            }
+        } else {
+            return true;
         }
-    } else {
-        return true;
     }
-}
 
     /**
      * Checks if a directory exists.
      * @param path - The directory path. 
      * @returns - The server path or error.
      */
-    private isDirectory(path: string): string {
+    isDirectory(path: string): string {
         const { serverPath } = this.getRootPath(path)
 
         if (!fs.existsSync(serverPath)) {
