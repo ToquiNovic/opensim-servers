@@ -2,13 +2,14 @@
 import { BadRequestError } from '../../middlewares/global-errors'
 import Directory from '../../utils/directory'
 import DbService from '../../utils/dataBase'
-import { killProcess } from '../../utils'
 
 export async function DeleteServer(gridName: string) {
     try {
         // Finalice the server process
         const serverPath = Directory.isDirectory(gridName)
-        await killProcess(serverPath)
+        // await killProcess(5031) 
+        // puerto pvto/kill
+        console.log(serverPath)
 
         // Delete the server directory
         const dir = Directory.delete(gridName)

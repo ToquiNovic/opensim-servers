@@ -16,6 +16,7 @@ interface IFile {
 async function DirectoryStructure(dir: string): Promise<IFile> {
     const result: IFile = {}
     try {
+        console.log("Esta es la ruta",dir)
         const items = await fs.promises.readdir(dir, { withFileTypes: true })
         for (const item of items) {
             if (item.isDirectory()) {

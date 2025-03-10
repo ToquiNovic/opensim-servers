@@ -1,10 +1,11 @@
 interface RegionProps {
     gridName: string;
+    ip?: string;
     port?: number;
-    uuid?:string
+    uuid?:string,
 }
 
-export function regionConfig({gridName, port = 9000, uuid}: RegionProps) {
+export function regionConfig({gridName, port = 9000,ip , uuid}: RegionProps) {
     const coordinates = "2431,2338";
     return `
 ; ### Region ${gridName}
@@ -17,10 +18,10 @@ RegionUUID = ${uuid}
 Location = "${coordinates}"
 SizeX = 512
 SizeY = 512
-InternalAddress = "0.0.0.0"
+InternalAddress = "${ip}"
 InternalPort = ${port}
 AllowAlternatePorts = False
-ExternalHostName = "127.0.0.1"
+ExternalHostName = "${ip}"
 
 ; *
 ; * Prim data

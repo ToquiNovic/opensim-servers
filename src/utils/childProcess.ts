@@ -1,6 +1,6 @@
 import { exec, spawn } from "node:child_process";
 import { log, LogLevel } from "./logger";
-import { BadRequestError } from "@/middlewares/global-errors";
+import { BadRequestError } from "../middlewares/global-errors";
 
 
 // Funciona 
@@ -30,20 +30,5 @@ export function spawnn(command: string, directory: string): void {
     } catch (error) {
         log(LogLevel.ERROR, `Error executing command: ${error instanceof Error ? error.message : error}`)
         throw new BadRequestError(`Error executing command: ${error instanceof Error ? error.message : error}`)
-    }
-}
-
-export async function killProcess(directory: string) {
-    log(LogLevel.WARNING, `Killing process: ${directory}`)
-    try {
-        const command = process.platform === 'win32'
-            ? `wmic process where "ExecutablePath like '${directory}%' and not ExecutablePath like '%mic%'" delete`
-            : `pkill -f ${directory}`;
-        await execute(command, directory)
-    } catch (error) {
-        if (error instanceof Error) {
-            log(LogLevel.ERROR, `Error killing process: ${error.message}`)
-            throw new BadRequestError(`Error killing process: ${error.message}`)
-        }
     }
 }
