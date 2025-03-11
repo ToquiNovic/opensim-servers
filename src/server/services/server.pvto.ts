@@ -12,7 +12,7 @@ export function ConfigurePvto(dir: string, data: DataServerDto): void {
         log(LogLevel.INFO, `Configuring pvto in ${dir}`)
         const connten = EnvConfig(data)
         const envFilePath = path.join(dir, '.env')
-        Directory.writeFile(envFilePath, connten)
+        Directory.writeOrUpdateFile(envFilePath, connten)
         log(LogLevel.SUCCESS, `Pvto configurated`)
 
     } catch (error) {

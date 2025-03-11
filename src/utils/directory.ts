@@ -3,46 +3,28 @@ import { ROOT_PATH } from '../config/config'
 import path from 'node:path'
 import fs from 'node:fs'
 
-interface IFile {
-    [Key: string]: IFile | string[] | undefined,
-    files?: string[]
-}
-
-/**
- * Recursively reads the directory structure.
- * @param dir - The directory path.
- * @returns A promise that resolves to the directory structure.
- */
-async function DirectoryStructure(dir: string): Promise<IFile> {
-    const result: IFile = {}
+function readFileContent(filePath: string) {
     try {
-        console.log("Esta es la ruta",dir)
-        const items = await fs.promises.readdir(dir, { withFileTypes: true })
-        for (const item of items) {
-            if (item.isDirectory()) {
-                result[item.name] = await DirectoryStructure(path.join(dir, item.name))
-
-            } else {
-                if (!result.files) {
-                    result.files = []
-                }
-                result.files.push(item.name)
-            }
-        }
-        return result
+        return fs.readFileSync(filePath, 'utf8')
     } catch (error) {
-        throw new CustomError(`Error reading directory ${dir}: ${(error as Error).message}`, 500);
+        throw new CustomError(`Error reading file ${filePath}: ${(error as Error).message}`, 500);
     }
 }
 
-/**
- * Extracts the database name from a file content.
- * @param content - The file content.
- * @returns The database name.
- */
-function extractDbName(content: string) {
+function searchServerFile(serverPath: string, file: string) {
+    const filePath = path.join(serverPath, file)
+
     try {
-        const match = content.match(/Database=(.*?);/)
+        const content = fs.readFileSync(filePath, 'utf8')
+        return { content }
+    } catch (error) {
+        throw new CustomError(`Error reading file ${filePath}: ${(error as Error).message}`, 500);
+    }
+}
+
+function extractInfo(content: string, regex: RegExp) {
+    try {
+        const match = content.match(regex)
         if (match && match[1]) {
             return match[1]
         }
@@ -52,12 +34,7 @@ function extractDbName(content: string) {
 }
 
 class Directory {
-    /**
-     * Gets the root path and related paths.
-     * @param dir - The directory name.
-     * @returns An object containing the server, region, and world paths.
-     */
-    getRootPath(dir: string) {
+    getRootPath(dir: string) { // get the root path and related paths
         this.checkExists(ROOT_PATH)
 
         const serverPath = path.join(ROOT_PATH, dir)
@@ -67,11 +44,7 @@ class Directory {
         return { serverPath, regionPath, worldPath }
     }
 
-    /**
-    * Gets all servers.
-    * @returns An array of server objects or an error message.
-    */
-    getServers() {
+    getServers() { // get all servers
         try {
             this.checkExists(ROOT_PATH)
             return fs.readdirSync(ROOT_PATH).map((gridName) => ({
@@ -83,54 +56,35 @@ class Directory {
         }
     }
 
-    /**
-     * Gets a server by grid name.
-     * @param gridName - The grid name.
-     * @returns An object containing the grid name and server path or an error message.
-     */
-    getServerByGridName(gridName: string) {
+    getServerByGridName(gridName: string) { // get the server by grid name
         const serverPath = this.isDirectory(gridName)
         return { gridName, serverPath }
     }
 
-    /**
-     * Gets all files in a server.
-     * @param gridName - The grid name.
-     * @returns A promise that resolves to the directory structure or an error message.
-     */
-    async getServerFiles(gridName: string) {
+
+    getServerFiles(gridName: string) { // get the server files
         const serverPath = this.isDirectory(gridName)
-        return await DirectoryStructure(serverPath)
-    }
 
-    /**
-     * Gets a specific file in a server.
-     * @param gridName - The grid name.
-     * @param file - The file name.
-     * @returns An object containing the file content or an error message.
-     */
-    searchServerFile(gridName: string, file: string) {
-        const serverPath = this.isDirectory(gridName)
-        const filePath = path.join(serverPath, file)
+        const myWordlFilePath = path.join(serverPath, 'bin', 'config-include', 'MyWorld.ini')
+        const regionFilePath = path.join(serverPath, 'bin', 'Regions', 'RegionConfig.ini')
 
-        if (!fs.existsSync(filePath)) {
-            throw new NotFoundError("File not found");
-        }
+        const myWorldContent = readFileContent(myWordlFilePath)
+        const regionContent = readFileContent(regionFilePath)
 
-        try {
-            const content = fs.readFileSync(filePath, 'utf8')
-            return { content }
-        } catch (error) {
-            throw new CustomError(`Error reading file ${filePath}: ${(error as Error).message}`, 500);
+        return {
+            myWorldFile: {
+                path: myWordlFilePath,
+                content: myWorldContent
+            },
+            regionFile: {
+                path: regionFilePath,
+                content: regionContent
+            }
         }
     }
 
-    /**
-     * Writes a file to the server.
-     * @param filePath - The file path to write.
-     * @param content - The file content.
-     */
-    writeFile(filePath: string, content: string) {
+    writeOrUpdateFile(filePath: string, content: string) {
+        this.checkExists(path.dirname(filePath)); 
         try {
             fs.writeFileSync(filePath, content);
         } catch (error) {
@@ -138,30 +92,26 @@ class Directory {
         }
     }
 
-    /**
-     * Deletes a directory of server.
-     * @param dir - The directory path.
-     * @returns The server path and databse name or an error message. 
-     */
-    delete(gridName: string) {
+    delete(gridName: string) { // delete the server directory
         const serverPath = this.isDirectory(gridName)
-        const file = this.searchServerFile(gridName, 'bin/config-include/MyWorld.ini')
-        const dbname = extractDbName(file.content)
 
+        const pvtoFile = searchServerFile(serverPath, 'pvto/.env')
+        const dbFile = searchServerFile(serverPath, 'bin/config-include/MyWorld.ini')
+
+        const pvtoPort = extractInfo(pvtoFile.content, /^FASTAPI_PORT=(\d+)$/m)
+        const dbname = extractInfo(dbFile.content, /^Database=(.*?);$/m)
+
+        // detener el servicio si se esta ejecutando 
         fs.rm(serverPath, { recursive: true }, (error) => {
             if (error) {
                 throw new CustomError(`Error deleting directory ${serverPath}: ${(error as Error).message}`, 500);
             }
         })
 
-        return { serverPath, dbname }
+        return { serverPath, dbname, pvtoPort }
     }
 
-    /**
-   * Checks if a directory exists, and creates it if it doesn't.
-   * @param dir - The directory path.
-   */
-    checkExists(dir: string) {
+    checkExists(dir: string) { // check if the directory exists and create it if it doesn't
         if (!fs.existsSync(dir)) {
             try {
                 fs.mkdirSync(dir, { recursive: true });
@@ -173,12 +123,7 @@ class Directory {
         }
     }
 
-    /**
-     * Checks if a directory exists.
-     * @param path - The directory path. 
-     * @returns - The server path or error.
-     */
-    isDirectory(path: string): string {
+    isDirectory(path: string): string { // check if the directory exists
         const { serverPath } = this.getRootPath(path)
 
         if (!fs.existsSync(serverPath)) {

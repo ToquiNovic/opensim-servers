@@ -13,10 +13,10 @@ ServerRouter.get('/files/:gridName', Controller.getFiles) // Get files by gridNa
 
 // Post
 ServerRouter.post('/',validateResource(CreateServerSchema), Controller.create) // create server
-ServerRouter.post('/file', Controller.searchFile) // Search file in server
 
 // Put
-ServerRouter.put('/file',) // Update server file
+ServerRouter.put('/file', Controller.updateFile) // Actualiza un archivo en el servidor
+
 
 // Delete
 ServerRouter.delete('/:gridName', Controller.delete) // Delete server

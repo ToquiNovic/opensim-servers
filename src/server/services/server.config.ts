@@ -35,8 +35,8 @@ export function ConfigServerService(config: DataServerDto): void{
     const worldContent = WorldInit(config)
 
     // Write files
-    Directory.writeFile(regionPath, regionContent)
-    Directory.writeFile(worldPath, worldContent)
+    Directory.writeOrUpdateFile(regionPath, regionContent)
+    Directory.writeOrUpdateFile(worldPath, worldContent)
 
     log(LogLevel.SUCCESS, 'Server configuration completed successfully!');
 }

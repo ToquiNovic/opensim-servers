@@ -22,7 +22,7 @@ export class DataServerDto {
 
 export class SearchFileDto {
     constructor(
-        public gridName: string,
-        public filename: string,
+        public filePath: string,
+        public content: string,
     ) {}
 }

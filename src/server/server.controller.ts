@@ -50,25 +50,25 @@ class ServerController {
 
     getFiles = (req: Request, res: Response, next: NextFunction) => {
         const { gridName } = req.params
-        this.service.getServerFiles({ gridName }).then((response) => {
-            log(LogLevel.SUCCESS, 'Searching file: Success')
-            res.status(200).json(response)
-        }).catch((error) => {
-            log(LogLevel.ERROR, 'Getting server files:', error.message)
-            next(error)
-        })
-
-    }
-
-    searchFile = (req: Request, res: Response, next: NextFunction) => {
-        const search: SearchFileDto = req.body
         try {
-            const response = this.service.serverFile(search)
-            log(LogLevel.SUCCESS, 'Searching file: Success')
+            const response = this.service.getServerFiles({ gridName })
+            log(LogLevel.SUCCESS, 'Getting server files: Success')
             res.status(200).json(response)
         } catch (error) {
-            log(LogLevel.ERROR, 'Searching file:',  { message: (error as Error).message })
+            log(LogLevel.ERROR, 'Getting server files')
             next(error)
+        }
+    }
+
+    updateFile = (req: Request, res: Response, next: NextFunction) => {
+        const {filePath, content}: SearchFileDto = req.body
+        try {
+            this.service.updateFile({ filePath, content });
+            log(LogLevel.SUCCESS, 'Updating file content: Success');
+            res.status(200).json({ message: 'File content updated successfully' });
+        } catch (error) {
+            log(LogLevel.ERROR, 'Updating file content:', { message: (error as Error).message });
+            next(error);
         }
     }
 }

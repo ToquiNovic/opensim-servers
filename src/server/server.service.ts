@@ -21,12 +21,12 @@ export class ServerService {
         return await DeleteServer(gridName);
     }
 
-    async getServerFiles({ gridName }: { gridName: string }) {
-        return await directory.getServerFiles(gridName)
+    getServerFiles({ gridName }: { gridName: string }) {
+        return directory.getServerFiles(gridName)
     }
 
-    serverFile(searchFile: SearchFileDto) {
-        const { gridName, filename } = searchFile;
-        return directory.searchServerFile(gridName, filename);
+    updateFile(searchFile: SearchFileDto) {
+        const { filePath, content } = searchFile;
+        return directory.writeOrUpdateFile(filePath, content);
     }
 }

@@ -139,13 +139,10 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  directory:
-                    type: object
+                $ref: '#/components/schemas/GerServerFiles'
 
   /server/file:
-    post:
+    put:
       tags:
         - Server
       summary: Get specific file from server
@@ -154,7 +151,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ServerFindFile'
+              $ref: '#/components/schemas/ServerUpdateFile'
       responses:
         "201":
           description: File uploaded
@@ -163,8 +160,9 @@ paths:
               schema:
                 type: object
                 properties:
-                  content:
-                    type: string
+                  message:
+                    type: object
+                    example: 'File content updated successfully' 
 
 components:
   schemas:
@@ -190,16 +188,37 @@ components:
         serverPath:
           type: string
           example: "C:/home/username/server"
-        pvtoPath:
-          type: string
-          example: "C:/home/username/server/pvto"
-    ServerFindFile:
+        # pvtoPath:
+        #   type: string
+        #   example: "C:/home/username/server/pvto"
+    GerServerFiles:
+      type: object
+      properties:
+        myWorldFile:
+          type: object
+          properties:
+            path:
+              type: string
+              example: "C:/home/username/server/bin/config-include/MyWorld.ini"
+            content:
+              type: string
+              example: "myWorldFile content"
+        regionConfigFile:
+          type: object
+          properties:
+            path:
+              type: string
+              example: "C:/home/username/server/bin/Regions/RegionConfig.ini"
+            content:
+              type: string
+              example: "regionConfigFile content"
+    ServerUpdateFile:
       type: object
       required:
-       - filename
+       - filePath
        - content
       properties:
-        gridname:
+        filePath:
           type: string
-        filename:
+        content:
           type: string
