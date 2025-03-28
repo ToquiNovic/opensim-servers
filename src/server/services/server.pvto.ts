@@ -5,7 +5,6 @@ import { DataServerDto } from "../server.dto";
 import { spawnn } from "../../utils";
 import Directory from "../../utils/directory";
 import path from 'node:path'
-import axios from "axios";
 
 export function ConfigurePvto(dir: string, data: DataServerDto): void {
     try {
@@ -23,18 +22,17 @@ export function ConfigurePvto(dir: string, data: DataServerDto): void {
 export async function StartPvto(dir: string, id: string): Promise<void> {
     try {
         log(LogLevel.WARNING, `Starting pvto in ${dir}`)
-        spawnn('python main.py', dir)
-        await log(LogLevel.SUCCESS, `Pvto started`, { server: id, message: 'Pvto started', state: Status.SERVER_CONFIGURATION_COMPLETED })
-    } catch (error) {
-        throw new BadRequestError(`${(error as Error).message}`);
-    }
-}
-
-export async function StopPvto(ip: number, port: number): Promise<void> {
-    try {
-        log(LogLevel.WARNING, `Stopping pvto in ${ip}:${port}`)
-        await axios.get(`http://${ip}:${port}/kill`)
-        log(LogLevel.SUCCESS, `Pvto stopped`)
+    
+        const consoleType = 'python.exe'
+        const command = consoleType.toLowerCase() === 'python.exe' ? 'main.py' : 'python main.py';
+        
+        spawnn(command, dir, consoleType);
+        
+        await log(LogLevel.SUCCESS, `Pvto started`, { 
+            server: id,
+            message: 'Pvto started', 
+            state: Status.SERVER_CONFIGURATION_COMPLETED 
+        })
     } catch (error) {
         throw new BadRequestError(`${(error as Error).message}`);
     }

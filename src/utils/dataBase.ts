@@ -37,7 +37,9 @@ class DBService {
 
     async drop(dbName: string): Promise<void> {
         try {
+            console.log('Dropping database', dbName)
             const command = `${mysql} -e "DROP DATABASE ${dbName};"`
+            console.log(command)
             await execute(command, DBConfig.BIN_PATH)
         } catch (error) {
             if (error instanceof Error) {

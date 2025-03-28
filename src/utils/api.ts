@@ -18,7 +18,7 @@ const ApiAuthenticate = async () => {
 export const ApiStatusServer = async (id: string, status: string) => {
     const accessToken = await ApiAuthenticate();
     try {
-        const statusId = (await axios.patch(`${ApiConfig.url}/server-status`, {name: status }, {
+        const statusId = (await axios.patch(`${ApiConfig.url}/server-status`, { name: status }, {
             headers: { Authorization: `Bearer ${accessToken}` }
         })).data.id
 
@@ -77,3 +77,33 @@ export const ApiCreateServer = async (data: DataServerDto) => {
 
     return server;
 }
+
+export const KillPvtoServer = async (port: string) => {
+    try {
+        let response;
+        try {
+            response = await axios.get(`http://localhost:${port}/kill`, { timeout: 2000 });
+            console.log(`Respuesta del servidor: ${JSON.stringify(response.data)}`);
+        } catch (innerError) {
+            if (axios.isAxiosError(innerError)) {
+                if (innerError.code === 'ECONNREFUSED') {
+                    console.log(`El servidor en el puerto ${port} no está corriendo`);
+                    return; // Sale de la función sin error
+                }
+                if (innerError.code === 'ECONNRESET') {
+                    console.log(`Conexión cerrada por el servidor en el puerto ${port}`);
+                    return; // Sale de la función sin error
+                }
+                // Si es otro error de Axios, lo lanzamos para que lo maneje el catch exterior
+                throw innerError;
+            }
+            // Si no es error de Axios, lo lanzamos también
+            throw innerError;
+        }
+    } catch (error) {
+        // Este catch solo manejará errores que no sean ECONNREFUSED ni ECONNRESET
+        const errorMessage = (error as Error).message || 'Unknown error';
+        console.error(`Error deteniendo el servidor: ${errorMessage}`);
+        throw new BadRequestError(`Error stopping server: ${errorMessage}`);
+    }
+};

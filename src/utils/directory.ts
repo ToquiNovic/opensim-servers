@@ -1,5 +1,6 @@
 import { CustomError, NotFoundError } from '../middlewares/global-errors'
 import { ROOT_PATH } from '../config/config'
+import { KillPvtoServer } from './api'
 import path from 'node:path'
 import fs from 'node:fs'
 
@@ -92,21 +93,26 @@ class Directory {
         }
     }
 
-    delete(gridName: string) { // delete the server directory
+    async delete(gridName: string) { // delete the server directory
         const serverPath = this.isDirectory(gridName)
 
         const pvtoFile = searchServerFile(serverPath, 'pvto/.env')
         const dbFile = searchServerFile(serverPath, 'bin/config-include/MyWorld.ini')
 
-        const pvtoPort = extractInfo(pvtoFile.content, /^FASTAPI_PORT=(\d+)$/m)
-        const dbname = extractInfo(dbFile.content, /^Database=(.*?);$/m)
+        const pvtoPort = extractInfo(pvtoFile.content, /^FASTAPI_PORT=(\d+)$/m) ?? '5000'
+        const dbname = extractInfo(dbFile.content, /Database=(.*?);/)
 
-        // detener el servicio si se esta ejecutando 
-        fs.rm(serverPath, { recursive: true }, (error) => {
-            if (error) {
-                throw new CustomError(`Error deleting directory ${serverPath}: ${(error as Error).message}`, 500);
-            }
-        })
+        console.log('paso la primera verificacion');
+        // detener el servicio si se esta ejecutando
+        await KillPvtoServer(pvtoPort); // Terminal el proceso.
+
+        try {
+            console.log('paso la segunda verificacion');
+            await fs.promises.rm(serverPath, { recursive: true, force: true });
+        } catch (error) {
+            console.log("error", error)
+            throw new CustomError(`Error deleting directory: ${(error as Error).message}`, 500);
+        }
 
         return { serverPath, dbname, pvtoPort }
     }
